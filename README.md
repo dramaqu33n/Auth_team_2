@@ -28,7 +28,7 @@
 
 [Ссылка на схему PostgreSQL DB](https://lucid.app/documents/view/86dc1b9b-b8f7-465d-b8f1-33bad770e210)
 
-![postgresql_db_schema](readme_assets/db_schema.png)
+![postgresql_db_schema](readme_assets/db_schema_2.png)
 
 ## Redis
 
