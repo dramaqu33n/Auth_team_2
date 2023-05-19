@@ -1,0 +1,240 @@
+openapi: 3.0.1
+info:
+  title: Yandex Practicum Auth module
+  version: 1.0.0
+servers:
+- url: /api/v1
+paths:
+  /auth/register:
+    post:
+      tags: [Authorization]
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User registered successfully
+  /auth/login:
+    post:
+      tags: [Authorization]
+      summary: Log in a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User logged in successfully
+  /auth/logout:
+    post:
+      tags: [Authorization]
+      summary: Log out a user
+      responses:
+        '200':
+          description: User logged out successfully
+  /auth/refresh:
+    post:
+      tags: [Authorization]
+      summary: Refresh a token
+      responses:
+        '200':
+          description: Token refreshed successfully
+  /auth/password-reset:
+    post:
+      tags: [Authorization]
+      summary: Initiate a password reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Password reset initiated successfully
+  /auth/password-reset/confirm:
+    post:
+      tags: [Authorization]
+      summary: Confirm a password reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                new_password:
+                  type: string
+      responses:
+        '200':
+          description: Password reset confirmed successfully
+  /auth/me:
+    get:
+      tags: [Authorization]
+      summary: Get current user's details
+      responses:
+        '200':
+          description: User details fetched successfully
+  
+  /roles/:
+    get:
+      tags: [Roles]
+      summary: List all roles
+      responses:
+        '200':
+          description: Roles fetched successfully
+    post:
+      tags: [Roles]
+      summary: Create a new role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Role created successfully
+  /roles/{roleId}:
+    parameters:
+      - in: path
+        name: roleId
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: [Roles]
+      summary: Get a specific role
+      responses:
+        '200':
+          description: Role fetched successfully
+    put:
+      tags: [Roles]
+      summary: Update a specific role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Role updated successfully
+    delete:
+      tags: [Roles]
+      summary: Delete a specific role
+      responses:
+        '204':
+          description: Role deleted successfully
+  /rights:
+    get:
+      tags:
+      - Rights
+      summary: List all rights
+      responses:
+        '200':
+          description: Rights fetched successfully
+    post:
+      tags:
+      - Rights
+      summary: Create a new right
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Right created successfully
+
+  /rights/{rightId}:
+    parameters:
+      - in: path
+        name: rightId
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+      - Rights
+      summary: Get a specific right
+      responses:
+        '200':
+          description: Right fetched successfully
+    put:
+      tags:
+      - Rights
+      summary: Update a specific right
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Right updated successfully
+    delete:
+      tags:
+      - Rights
+      summary: Delete a specific right
+      responses:
+        '204':
+          description: Right deleted successfully
+
+  /roles/{roleId}/rights:
+    parameters:
+      - in: path
+        name: roleId
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+      - Roles
+      summary: Get rights for a specific role
+      responses:
+        '200':
+          description: Rights fetched successfully
+    put:
+      tags:
+      - Roles
+      summary: Update rights for a specific role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+      responses:
+        '200':
+          description: Rights updated successfully
