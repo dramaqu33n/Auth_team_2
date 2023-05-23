@@ -2,7 +2,6 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from sqlalchemy.orm import Session
 
 from alembic import context
 
@@ -21,7 +20,10 @@ if config.config_file_name is not None:
 
 
 target_metadata = Base.metadata
-
+db_uri = f'postgresql://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}'
+config.set_main_option('sqlalchemy.url', db_uri)
+config.set_main_option('prepend_sys_path', settings.base_dir)
+config.set_main_option('script_location', 'src/db/alembic')
 
 
 def run_migrations_offline() -> None:
@@ -36,7 +38,6 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    db_uri = f'postgresql://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}'
     context.configure(
         url=db_uri,
         target_metadata=target_metadata,
@@ -55,9 +56,6 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    configuration = context.config
-    db_uri = f'postgresql://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}'
-    configuration.set_main_option('sqlalchemy.url', db_uri)
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -70,23 +68,6 @@ def run_migrations_online() -> None:
         )
 
         with context.begin_transaction():
-            session = Session(bind=connectable)
-
-            # Look for a superuser
-            superuser = session.query(User).filter(User.is_superuser).first()
-
-            # If there's no superuser, create one
-            if not superuser:
-                superuser_role = session.query(Role).filter(Role.name == 'superuser').first()
-                if not superuser_role:
-                    superuser_role = Role(name='superuser')
-                    session.add(superuser_role)
-                    session.commit()
-
-                # Assume you have a method to hash the password in User model
-                superuser = User(username=settings.superuser_name, password=User.set_password(settings.superuser_pass), is_superuser=True, role=superuser_role)
-                session.add(superuser)
-                session.commit()
             context.run_migrations()
 
 
