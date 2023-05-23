@@ -10,3 +10,10 @@ up:
 	@sleep 5
 	@echo "Creating a super user, Arnold Shortman"
 	python3 -m src.db.superuser
+
+
+# init_migrate:
+# 	@echo "Do initial migration"
+# 	alembic revision --autogenerate -m "Initial migration"
+# 	@sleep 5
+# 	alembic upgrade head
