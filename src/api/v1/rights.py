@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-from db.model import Right, Role
-from db.db_config import Base, engine, db_session
-
+from src.db.model import Right, Role
+from src.db.db_config import Base, engine, db_session
+from datetime import datetime
 
 rights_bp = Blueprint('rights', __name__)
 Base.metadata.bind = engine

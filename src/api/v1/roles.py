@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
-from db.model import Role
-from db.db_config import Base, engine, db_session
+from src.db.model import Role
+from src.db.db_config import Base, engine, db_session
+from datetime import datetime
 
 roles_bp = Blueprint('roles', __name__)
 Base.metadata.bind = engine
