@@ -4,7 +4,7 @@ from src.db.db_config import Base, engine, db_session
 from src.db.model import User, AccessHistory
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-
+from http import HTTPStatus
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -27,20 +27,21 @@ def register():
     username = data.get('username')
     password = data.get('password')
     email = data.get('email')
+    role = data.get('role', 'user')
     existing_user = session.query(User).filter_by(username=username).first()
     if existing_user:
-        return jsonify({'message': 'Username already exists'})
+        return jsonify({'message': 'Username already exists'}), HTTPStatus.CONFLICT
     new_user = User(
         username=username,
         email=email,
+        role=role,
         created=datetime.utcnow(),
         modified=datetime.utcnow()
     )
     new_user.set_password(password)
     session.add(new_user)
     session.commit()
-    return jsonify({'message': 'User registered successfully'})
-
+    return jsonify({'message': 'User registered successfully'}), HTTPStatus.OK
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
