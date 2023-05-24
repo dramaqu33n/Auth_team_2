@@ -53,3 +53,30 @@ def test_registration(data, expected_answer):
         if test_user:
             db_session.delete(test_user)
             db_session.commit()
+
+
+@pytest.mark.parametrize(
+    'data, expected_answer',
+    [
+        (
+            {
+                'username': 'super.arnold',
+                'password': '123qwe',
+            },
+            {
+                'status': HTTPStatus.OK,
+                'message': 'Login successful'
+            },
+        ),
+    ],
+)
+def test_login(data, expected_answer):
+    tester = app.test_client()
+
+    logger.info('DATA: %s', data)
+
+    response = tester.post('api/v1/auth/login', data=json.dumps(data), content_type='application/json')
+    response_data = json.loads(response.data)
+    
+    assert response.status_code == expected_answer['status']
+    assert response_data['message'] == expected_answer['message']
