@@ -60,18 +60,36 @@ def test_registration(data, expected_answer):
     [
         (
             {
-                'username': 'super.arnold',
-                'password': '123qwe',
+                'username': 'ivan.ivanov',
+                'password': 'ivanov666',
             },
             {
                 'status': HTTPStatus.OK,
                 'message': 'Login successful'
             },
         ),
+        (
+            {
+                'username': 'ivan.ivanov',
+                'password': 'ivanov777',
+            },
+            {
+                'status': HTTPStatus.UNAUTHORIZED,
+                'message': 'Invalid username or password'
+            },
+        ),
     ],
 )
 def test_login(data, expected_answer):
     tester = app.test_client()
+    new_user = {
+        'username': 'ivan.ivanov',
+        'password': 'ivanov666',
+        'email': 'ivan@ivanov.com',
+    }
+    response = tester.post('api/v1/auth/register', data=json.dumps(new_user), content_type='application/json')
+    
+    logger.info('Just created user: %s', new_user)
 
     logger.info('DATA: %s', data)
 
@@ -80,3 +98,10 @@ def test_login(data, expected_answer):
     
     assert response.status_code == expected_answer['status']
     assert response_data['message'] == expected_answer['message']
+
+    with app.app_context():
+        test_user = db_session.query(User).filter_by(username='ivan.ivanov').first()
+        if test_user:
+            db_session.delete(test_user)
+            db_session.commit()
+            logger.info('Deleted user %s', test_user)
