@@ -73,6 +73,10 @@ class RoleRight(Base):
     right_id = Column(UUID(as_uuid=True), ForeignKey(Right.id), index=True)
     created = Column(DateTime, default=datetime.utcnow(), nullable=False)
 
+class Alembic(Base):
+    __tablename__ = 'alembic_version'
+    version_num = Column(String(32), primary_key=True)
+
 
 if __name__ == '__main__':
     Base.metadata.create_all(bind=engine)

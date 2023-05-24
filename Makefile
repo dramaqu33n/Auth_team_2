@@ -6,14 +6,7 @@ up:
 	docker compose up --build -d
 	@sleep 5
 	@echo "Creating db models (if the don't already exist)"
-	python3 -m src.db.model
+	python3 -m src.db.init_migrate
 	@sleep 5
-	@echo "Creating a super user, Arnold Shortman"
+	@echo "Creating a super user if there's no"
 	python3 -m src.db.superuser
-
-
-# init_migrate:
-# 	@echo "Do initial migration"
-# 	alembic revision --autogenerate -m "Initial migration"
-# 	@sleep 5
-# 	alembic upgrade head
