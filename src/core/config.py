@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     db_password: str = Field(..., env='DB_PASSWORD')
     superuser_name: str = Field(..., env='SUPERUSER_NAME')
     superuser_pass: str = Field(..., env='SUPERUSER_PASS')
+    secret_key: str = Field(..., env='SECRET_KEY')
     redis_host: str = Field(..., env='REDIS_HOST')
     redis_port: int = Field(6379, env='REDIS_PORT')
     base_dir: str = Field(up(up(up(abspath(__file__)))), env='BASE_DIR')

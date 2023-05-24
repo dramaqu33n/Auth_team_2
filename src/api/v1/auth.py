@@ -59,8 +59,8 @@ def login():
         )
         session.add(access_history)
         session.commit()
-        return jsonify({'message': 'Login successful'})
-    return jsonify({'message': 'Invalid username or password'}), 401
+        return jsonify({'message': 'Login successful'}), HTTPStatus.OK
+    return jsonify({'message': 'Invalid username or password'}), HTTPStatus.UNAUTHORIZED
 
 
 @auth_bp.route('/password-reset', methods=['POST'])
