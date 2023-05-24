@@ -27,12 +27,14 @@ def register():
     username = data.get('username')
     password = data.get('password')
     email = data.get('email')
+    role = data.get('role', 'user')
     existing_user = session.query(User).filter_by(username=username).first()
     if existing_user:
         return jsonify({'message': 'Username already exists'})
     new_user = User(
         username=username,
         email=email,
+        role=role,
         created=datetime.utcnow(),
         modified=datetime.utcnow()
     )
