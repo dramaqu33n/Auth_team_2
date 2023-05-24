@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required
-from db.db_config import Base, engine, db_session
-from db.model import User, AccessHistory
+from src.db.db_config import Base, engine, db_session
+from src.db.model import User, AccessHistory
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
