@@ -10,3 +10,6 @@ up:
 	@sleep 5
 	@echo "Creating a super user if there's no"
 	python3 -m src.db.superuser
+
+local_test:
+	pytest tests/functional/src --log-cli-level=INFO
