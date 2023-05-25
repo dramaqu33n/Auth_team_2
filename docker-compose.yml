@@ -31,6 +31,15 @@ services:
     volumes:
       - redis_data:/data
   
+  auth_service:
+    build: .
+    container_name: auth_service
+    restart: always
+    ports:
+      - "5001:5001"
+    networks:
+      - new_admin_panel_sprint_2_admin_panel_network
+  
   swagger:
     image: swaggerapi/swagger-ui
     container_name: swagger_auth
