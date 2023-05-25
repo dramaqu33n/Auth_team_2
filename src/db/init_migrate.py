@@ -17,7 +17,7 @@ def do_init_migration() -> bool:
         logger.info('Migrations table does not exist')
     
     logger.info(f'Applying migrations')
-    alembic_cfg = Config("alembic.ini")  # Path to your Alembic configuration file
+    alembic_cfg = Config("alembic.ini")
     command.revision(alembic_cfg, autogenerate=True, message="Initial migration")
     command.upgrade(alembic_cfg, "head")
 

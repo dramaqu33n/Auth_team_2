@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, DateTime, func
+from sqlalchemy import Column, ForeignKey, String, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from src.db.db_config import Base, engine
@@ -43,21 +43,9 @@ class Role(Base):
     created = Column(DateTime, default=datetime.utcnow(), nullable=False)
     modified = Column(DateTime, default=datetime.utcnow(), nullable=False)
 
-    rights = relationship('Right', secondary='role_rights', backref='roles')
 
     def __repr__(self):
         return f'''<Role {self.role_name}, ID: {self.id}, Created: {self.created}> '''
-
-
-class Right(Base):
-    __tablename__ = 'rights'
-    id = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
-    right_name = Column(String(64), unique=True, index=True, nullable=False)
-    created = Column(DateTime, default=datetime.utcnow(), nullable=False)
-    modified = Column(DateTime, default=datetime.utcnow(), nullable=False)
-    
-    def __repr__(self):
-        return f'''<Right {self.right_name}, ID: {self.id}, Created: {self.created}> '''
 
 
 class UserRole(Base):
@@ -65,14 +53,6 @@ class UserRole(Base):
     id = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey(User.id), index=True)
     role_id = Column(UUID(as_uuid=True), ForeignKey(Role.id), index=True)
-
-
-class RoleRight(Base):
-    __tablename__ = 'role_rights'
-    id = Column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
-    role_id = Column(UUID(as_uuid=True), ForeignKey(Role.id), index=True)
-    right_id = Column(UUID(as_uuid=True), ForeignKey(Right.id), index=True)
-    created = Column(DateTime, default=datetime.utcnow(), nullable=False)
 
 
 class AccessHistory(Base):

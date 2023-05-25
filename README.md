@@ -26,9 +26,9 @@
 
 ## PosgreSQL DB: предлагаемая схема
 
-[Ссылка на схему PostgreSQL DB](https://lucid.app/documents/view/86dc1b9b-b8f7-465d-b8f1-33bad770e210)
+[Ссылка на схему PostgreSQL DB](https://lucid.app/lucidchart/855c04f2-3b29-4e48-920f-e2b527d88393/view?page=0_0&invitationId=inv_b5da600a-e298-4d10-8a3d-8d53c63755ec#)
 
-![postgresql_db_schema](readme_assets/db_schema_2.png)
+![postgresql_db_schema](readme_assets/db_schema.png)
 
 **NB:**  добавить в user model email.
 
