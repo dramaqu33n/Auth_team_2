@@ -16,7 +16,6 @@ RUN  pip install --upgrade pip \
 
 COPY src/. src/.
 COPY tests/. tests/.
+COPY alembic.ini alembic.ini
 
 ENTRYPOINT ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5001", "src.app:app"]
-# ENTRYPOINT ["python3", "src/app.py"]
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
