@@ -35,6 +35,10 @@ services:
     build: .
     container_name: auth_service
     restart: always
+    entrypoint: >
+      sh -c " python3 utils/wait_for_postgres.py
+      && python3 utils/wait_for_redis.py
+      && gunicorn --workers 4 --bind 0.0.0.0:5001 src.app:app"
     ports:
       - "5001:5001"
     networks:

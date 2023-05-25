@@ -1,0 +1,63 @@
+version: '3'
+
+networks:
+  new_admin_panel_sprint_2_admin_panel_network:
+    external: true
+
+services:
+  auth_service:
+    build: ../../.
+    container_name: auth_service
+    image: auth-image
+    entrypoint: >
+      sh -c " python3 utils/wait_for_postgres.py
+      && python3 utils/wait_for_redis.py
+      && gunicorn --workers 4 --bind 0.0.0.0:5001 src.app:app"
+    ports:
+      - "5001:5001"
+    networks:
+        - new_admin_panel_sprint_2_admin_panel_network
+
+  test:
+    image: auth-image
+    container_name: test_service
+    depends_on:
+      - auth_service
+    entrypoint: >
+      sh -c "
+      pytest tests/functional/src --log-cli-level=INFO"
+    env_file:
+      - ../../.env
+    networks:
+        - new_admin_panel_sprint_2_admin_panel_network
+
+  postgres_auth:
+    container_name: postgres_auth   
+    image: postgres:13
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - new_admin_panel_sprint_2_admin_panel_network
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data 
+
+  redis:
+    image: redis
+    container_name: redis_auth
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - new_admin_panel_sprint_2_admin_panel_network
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_auth_data:
+  redis_data:
+

@@ -16,4 +16,6 @@ up:
 	docker compose up --build
 
 local_test:
+	export ENV_MODE=.env.local; export PYTHONPATH=${PWD};\
+	docker compose up --build
 	pytest tests/functional/src --log-cli-level=INFO
