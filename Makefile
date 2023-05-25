@@ -3,7 +3,7 @@ up:
 	docker compose down
 	@sleep 5
 	@echo "Building the containers and starting them"
-	docker compose up --build -d
+	docker compose up --build
 	@sleep 5
 	@echo "Creating db models (if the don't already exist)"
 	python3 -m src.db.init_migrate
