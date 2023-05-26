@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from redis import StrictRedis
 
-from core.config import settings
+from src.core.config import settings
 
 
 class TokenStorage:
