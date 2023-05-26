@@ -6,6 +6,7 @@ from pydantic import BaseSettings, Field
 
 from src.logs.log_config import logger
 
+
 load_dotenv('.env')
 
 
@@ -21,6 +22,8 @@ class Settings(BaseSettings):
     secret_key: str = Field(..., env='SECRET_KEY')
     redis_host: str = Field(..., env='REDIS_HOST')
     redis_port: int = Field(6379, env='REDIS_PORT')
+    access_token_ttl: int = Field(900, env='ACCESS_TOKEN_TTL') # 15 minutes
+    refresh_token_ttl: int = Field(604800, env='REFRESH_TOKEN_TTL') # 1 week
     base_dir: str = Field(up(up(up(abspath(__file__)))), env='BASE_DIR')
     cache_expire_in_seconds: int = Field(300000, env='CACHE_EXPIRE_IN_SECONDS')
     log_level: str = Field('INFO', env='LOG_LEVEL')

@@ -106,5 +106,3 @@
 #             session.commit()
 #             return jsonify({'message': 'Rights updated successfully'})
 #     return jsonify({'message': 'Role not found or invalid data'}), 404
-
-

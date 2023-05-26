@@ -1,13 +1,17 @@
-from flask import Blueprint, request, jsonify
-from src.db.model import Role
-from src.db.db_config import Base, engine, db_session
 from datetime import datetime
+
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
+
+from src.db.db_config import Base, engine, db_session
+from src.db.model import Role
 
 roles_bp = Blueprint('roles', __name__)
 Base.metadata.bind = engine
 
 
 @roles_bp.route('/', methods=['GET'])
+@jwt_required()
 def list_roles():
     session = db_session()
     roles = session.query(Role).all()
@@ -24,6 +28,7 @@ def list_roles():
 
 
 @roles_bp.route('/', methods=['POST'])
+@jwt_required()
 def create_role():
     session = db_session()
     data = request.get_json()
@@ -35,6 +40,7 @@ def create_role():
 
 
 @roles_bp.route('/<role_id>', methods=['GET'])
+@jwt_required()
 def get_role(role_id):
     session = db_session()
     role = session.query(Role).get(role_id)
@@ -51,6 +57,7 @@ def get_role(role_id):
 
 
 @roles_bp.route('/<role_id>', methods=['PUT'])
+@jwt_required()
 def update_role(role_id):
     session = db_session()
     role = session.query(Role).get(role_id)
@@ -65,6 +72,7 @@ def update_role(role_id):
 
 
 @roles_bp.route('/<role_id>', methods=['DELETE'])
+@jwt_required()
 def delete_role(role_id):
     session = db_session()
     role = session.query(Role).get(role_id)
