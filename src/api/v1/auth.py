@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 from src.db.db_config import Base, engine, db_session
-from src.db.model import User, AccessHistory
+from src.db.model import User, AccessHistory, Role
 from src.db.redis import TokenStorage
 
 
@@ -23,20 +23,25 @@ token_storage = TokenStorage()
 def register():
     data = request.get_json()
     username = data.get('username')
-    password = data.get('password') or ''
-    email = data.get('email')
-    role = data.get('role', 'user')
     existing_user = User.query.filter_by(username=username).first()
     if existing_user:
         return jsonify(
             {'message': 'Username already exists'},
         ), HTTPStatus.CONFLICT
+    password = data.get('password', '')
+    email = data.get('email')
+    name = data.get('name', '')
+    surname = data.get('surname', '')
+    role = data.get('role', 'user')
+    user_role = Role.query.filter_by(role_name=role).first()
     new_user = User(
         username=username,
         email=email,
-        role=role,
+        name=name,
+        surname=surname,
     )
     new_user.set_password(password)
+    new_user.roles.append(user_role)
     db_session.add(new_user)
     db_session.commit()
     return jsonify({'message': 'User registered successfully'}), HTTPStatus.OK
