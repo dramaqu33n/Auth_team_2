@@ -25,10 +25,10 @@ class TokenStorage:
         else:
             self.redis.set(key, token, settings.refresh_token_ttl)
 
-    # def get_token(self, token_type, user_id, user_agent):
-    #     key = self.generate_key(token_type, user_id, user_agent)
-    #     return self.redis.get(key)
+    def get_token(self, token_type, user_id, user_agent):
+        key = self.generate_key(token_type, user_id, user_agent)
+        return self.redis.get(key)
 
-    # def invalidate_token(self, token_type, user_id, user_agent):
-    #     key = self.generate_key(token_type, user_id, user_agent)
-    #     self.redis.delete(key)
+    def invalidate_token(self, token_type, user_id, user_agent):
+        key = self.generate_key(token_type, user_id, user_agent)
+        self.redis.delete(key)
