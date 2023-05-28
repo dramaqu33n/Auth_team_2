@@ -1,11 +1,13 @@
+from datetime import datetime
+import uuid
+
 from flask_login import UserMixin
 from sqlalchemy import Column, ForeignKey, String, DateTime
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
-from src.db.db_config import Base, engine
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-import uuid
-from datetime import datetime
+
+from src.db.db_config import Base, engine
 
 
 class User(Base, UserMixin):
@@ -21,14 +23,14 @@ class User(Base, UserMixin):
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
-    
+
     def check_password(self, password):
         return check_password_hash(self.password, password)
-    
+
     @property
     def is_superuser(self):
         return self.role == 'superuser'
-    
+
     access_history = relationship('AccessHistory', backref='user')
     roles = relationship('Role', secondary='user_roles', backref='users')
 
@@ -42,7 +44,6 @@ class Role(Base):
     role_name = Column(String(64), unique=True, index=True, nullable=False)
     created = Column(DateTime, default=datetime.utcnow(), nullable=False)
     modified = Column(DateTime, default=datetime.utcnow(), nullable=False)
-
 
     def __repr__(self):
         return f'''<Role {self.role_name}, ID: {self.id}, Created: {self.created}> '''

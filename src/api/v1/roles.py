@@ -1,4 +1,5 @@
 from datetime import datetime
+from http import HTTPStatus
 
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
@@ -24,7 +25,7 @@ def list_roles():
         }
         for role in roles
     ]
-    return jsonify(serialized_roles), 200
+    return jsonify(serialized_roles), HTTPStatus.OK
 
 
 @roles_bp.route('/', methods=['POST'])
@@ -35,7 +36,7 @@ def create_role():
     new_role = Role(role_name=name)
     db_session.add(new_role)
     db_session.commit()
-    return jsonify({'message': 'Role created successfully'}), 201
+    return jsonify({'message': 'Role created successfully'}), HTTPStatus.CREATED
 
 
 @roles_bp.route('/<role_id>', methods=['GET'])
@@ -51,7 +52,7 @@ def get_role(role_id):
         }
 
         return jsonify(serialized_role)
-    return jsonify({'message': 'Role not found'}), 404
+    return jsonify({'message': 'Role not found'}), HTTPStatus.NOT_FOUND
 
 
 @roles_bp.route('/<role_id>', methods=['PUT'])
@@ -65,7 +66,7 @@ def update_role(role_id):
         role.modified = datetime.utcnow()
         db_session.commit()
         return jsonify({'message': 'Role updated successfully'})
-    return jsonify({'message': 'Role not found'}), 404
+    return jsonify({'message': 'Role not found'}), HTTPStatus.NOT_FOUND
 
 
 @roles_bp.route('/<role_id>', methods=['DELETE'])
@@ -76,4 +77,4 @@ def delete_role(role_id):
         db_session.delete(role)
         db_session.commit()
         return jsonify({'message': 'Role deleted successfully'})
-    return jsonify({'message': 'Role not found'}), 404
+    return jsonify({'message': 'Role not found'}), HTTPStatus.NOT_FOUND

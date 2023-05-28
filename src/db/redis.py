@@ -1,6 +1,4 @@
 import hashlib
-import secrets
-from datetime import timedelta
 
 from redis import StrictRedis
 

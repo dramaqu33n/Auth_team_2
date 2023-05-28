@@ -14,9 +14,11 @@ jwt = JWTManager(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 @login_manager.user_loader
 def user_loader(user_id):
     return db_session.get(User, user_id)
+
 
 api_bp = Blueprint('api_v1', __name__, url_prefix='/api/v1')
 api_bp.register_blueprint(auth_bp, url_prefix='/auth')

@@ -7,7 +7,6 @@ from alembic import context
 
 from src.core.config import settings
 from src.db.db_config import Base
-from src.db.model import User, Role
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

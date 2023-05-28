@@ -5,7 +5,7 @@ from http import HTTPStatus
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user
 
 from src.db.db_config import Base, engine, db_session
 from src.db.model import User, AccessHistory, Role
@@ -45,6 +45,7 @@ def register():
     db_session.add(new_user)
     db_session.commit()
     return jsonify({'message': 'User registered successfully'}), HTTPStatus.OK
+
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
