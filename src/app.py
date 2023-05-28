@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from src.api.v1.auth import auth_bp
 from src.api.v1.roles import roles_bp
 from src.core.config import settings
+from src.db.model import User
 
 
 app = Flask(__name__)
