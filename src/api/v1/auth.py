@@ -109,5 +109,8 @@ def password_reset():
 @auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
+    user_id = get_jwt_identity()
+    user_agent = request.headers.get("User-Agent")
     logout_user()
-    return jsonify({'message': 'Logout successful'})
+    token_storage.invalidate_token('access', user_id, user_agent)
+    return jsonify({'message': 'Logout successful, access_token revoked'})
