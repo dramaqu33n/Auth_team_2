@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required
 from src.db.db_config import Base, engine, db_session
 from src.db.model import Role
 
+
 roles_bp = Blueprint('roles', __name__)
 Base.metadata.bind = engine
 
@@ -13,8 +14,7 @@ Base.metadata.bind = engine
 @roles_bp.route('/', methods=['GET'])
 @jwt_required()
 def list_roles():
-    session = db_session()
-    roles = session.query(Role).all()
+    roles = db_session.query(Role).all()
     serialized_roles = [
         {
             'id': role.id,
@@ -24,26 +24,24 @@ def list_roles():
         }
         for role in roles
     ]
-    return jsonify(serialized_roles)
+    return jsonify(serialized_roles), 200
 
 
 @roles_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_role():
-    session = db_session()
     data = request.get_json()
     name = data.get('name')
     new_role = Role(role_name=name)
-    session.add(new_role)
-    session.commit()
+    db_session.add(new_role)
+    db_session.commit()
     return jsonify({'message': 'Role created successfully'}), 201
 
 
 @roles_bp.route('/<role_id>', methods=['GET'])
 @jwt_required()
 def get_role(role_id):
-    session = db_session()
-    role = session.query(Role).get(role_id)
+    role = db_session.get(Role, role_id)
     if role:
         serialized_role = {
             'id': role.id,
@@ -59,14 +57,13 @@ def get_role(role_id):
 @roles_bp.route('/<role_id>', methods=['PUT'])
 @jwt_required()
 def update_role(role_id):
-    session = db_session()
-    role = session.query(Role).get(role_id)
+    role = db_session.get(Role, role_id)
     if role:
         data = request.get_json()
         name = data.get('name')
         role.role_name = name
         role.modified = datetime.utcnow()
-        session.commit()
+        db_session.commit()
         return jsonify({'message': 'Role updated successfully'})
     return jsonify({'message': 'Role not found'}), 404
 
@@ -74,10 +71,9 @@ def update_role(role_id):
 @roles_bp.route('/<role_id>', methods=['DELETE'])
 @jwt_required()
 def delete_role(role_id):
-    session = db_session()
-    role = session.query(Role).get(role_id)
+    role = db_session.get(Role, role_id)
     if role:
-        session.delete(role)
-        session.commit()
+        db_session.delete(role)
+        db_session.commit()
         return jsonify({'message': 'Role deleted successfully'})
     return jsonify({'message': 'Role not found'}), 404

@@ -94,7 +94,7 @@ def login():
 def password_reset():
     data = request.get_json()
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    user = db_session.get(User, user_id)
 
     if user:
         new_password = data.get('new_password') or ''
