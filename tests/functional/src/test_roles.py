@@ -7,84 +7,9 @@ from src.app import app
 from src.db.db_config import db_session
 from src.db.model import Role
 from src.logs.log_config import logger
-
-
-@pytest.fixture
-def authenticated_client():
-    tester = app.test_client()
-    new_user = {
-        'username': 'ivan.ivanov',
-        'password': 'ivanov666',
-        'email': 'ivan@ivanov.com',
-    }
-    response = tester.post(
-        'api/v1/auth/register',
-        data=json.dumps(new_user),
-        content_type='application/json',
-    )
-    response = tester.post(
-        'api/v1/auth/login',
-        data=json.dumps({
-            'username': 'ivan.ivanov',
-            'password': 'ivanov666',
-        }),
-        content_type='application/json',
-    )
-    response_data = json.loads(response.data)
-    access_token = response_data['access_token']
-    tester.access_token = access_token
-    return tester
-
-
-def make_authenticated_post(
-        authenticated_client,
-        url,
-        data=None,
-        content_type='application/json',
-        headers=None,
-):
-    headers = headers or {}
-    headers['Authorization'] = f'Bearer {authenticated_client.access_token}'
-    return authenticated_client.post(
-        url,
-        data=data,
-        content_type=content_type,
-        headers=headers,
-    )
-
-
-def make_authenticated_put(
-        authenticated_client,
-        url,
-        data=None,
-        content_type='application/json',
-        headers=None,
-):
-    headers = headers or {}
-    headers['Authorization'] = f'Bearer {authenticated_client.access_token}'
-    return authenticated_client.put(
-        url,
-        data=data,
-        content_type=content_type,
-        headers=headers,
-    )
-
-
-def make_authenticated_delete(
-        authenticated_client,
-        url,
-        data=None,
-        content_type='application/json',
-        headers=None,
-):
-    headers = headers or {}
-    headers['Authorization'] = f'Bearer {authenticated_client.access_token}'
-    return authenticated_client.delete(
-        url,
-        data=data,
-        content_type=content_type,
-        headers=headers,
-    )
+from tests.functional.utils import make_authenticated_delete
+from tests.functional.utils import make_authenticated_post
+from tests.functional.utils import make_authenticated_put
 
 
 def test_list_roles(authenticated_client):
