@@ -18,5 +18,7 @@ COPY src/. src/.
 COPY tests/. tests/.
 COPY utils/. utils/.
 COPY alembic.ini alembic.ini
+COPY startup.sh /startup.sh
 
-# ENTRYPOINT ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5001", "src.app:app"]
+ENTRYPOINT ["/startup.sh"]
+
