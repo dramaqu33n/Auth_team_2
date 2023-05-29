@@ -9,6 +9,8 @@ services:
     container_name: postgres_auth   
     image: postgres:13
     restart: always
+    ports:
+      - "5432:5432"
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
     environment:
@@ -19,9 +21,11 @@ services:
       - postgres_auth_data:/var/lib/postgresql/data 
 
   redis:
-    image: redis:7
+    image: redis
     container_name: redis_auth
     restart: always
+    ports:
+      - "6379:6379"
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
     volumes:
@@ -31,6 +35,12 @@ services:
     build: .
     container_name: auth_service
     restart: always
+    entrypoint: >
+      sh -c " python3 utils/wait_for_postgres.py
+      && python3 utils/wait_for_redis.py
+      && gunicorn --workers 4 --bind 0.0.0.0:5001 src.app:app"
+    ports:
+      - "5001:5001"
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
   
@@ -43,21 +53,22 @@ services:
       - SWAGGER_JSON=/swagger.yaml
     ports:
       - "8080:8080"
+    
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
     
-  nginx:
-    image: nginx:latest
-    container_name: nginx_fastapi
-    restart: always
-    depends_on:
-      - auth_service
-    ports:
-      - "80:80"
-    networks:
-      - new_admin_panel_sprint_2_admin_panel_network
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx_fastapi
+  #   restart: always
+  #   depends_on:
+  #     - api_service
+  #   ports:
+  #     - "80:80"
+  #   networks:
+  #     - new_admin_panel_sprint_2_admin_panel_network
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
 
 volumes:
   postgres_auth_data:
