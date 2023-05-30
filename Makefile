@@ -15,5 +15,7 @@ init_setup:
 up:
 	docker compose up --build
 
+up_test:
+	docker compose -f docker-compose.dev.yml up --build
 l_test:
 	DB_HOST=localhost pytest tests/functional/src --log-cli-level=INFO
