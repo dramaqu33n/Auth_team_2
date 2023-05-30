@@ -1,30 +1,26 @@
 from os.path import abspath
 from os.path import dirname as up
 
-from dotenv import load_dotenv
-from pydantic import BaseSettings, Field
-
-
-load_dotenv('.env')
+from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    project_name: str = Field(..., env='PROJECT_NAME')
-    db_host: str = Field(..., env='DB_HOST')
-    db_port: int = Field(5432, env='DB_PORT')
-    db_name: str = Field(..., env='DB_NAME')
-    db_user: str = Field(..., env='DB_USER')
-    db_password: str = Field(..., env='DB_PASSWORD')
-    superuser_name: str = Field(..., env='SUPERUSER_NAME')
-    superuser_pass: str = Field(..., env='SUPERUSER_PASS')
-    secret_key: str = Field(..., env='SECRET_KEY')
-    redis_host: str = Field(..., env='REDIS_HOST')
-    redis_port: int = Field(6379, env='REDIS_PORT')
-    access_token_ttl: int = Field(900, env='ACCESS_TOKEN_TTL')  # 15 minutes
-    refresh_token_ttl: int = Field(604800, env='REFRESH_TOKEN_TTL')  # 1 week
-    base_dir: str = Field(up(up(up(abspath(__file__)))), env='BASE_DIR')
-    cache_expire_in_seconds: int = Field(300000, env='CACHE_EXPIRE_IN_SECONDS')
-    log_level: str = Field('INFO', env='LOG_LEVEL')
+    project_name: str
+    db_host: str
+    db_port: int = 5432
+    db_name: str
+    db_user: str
+    db_password: str
+    superuser_name: str
+    superuser_pass: str
+    secret_key: str
+    redis_host: str
+    redis_port: int = 6379
+    access_token_ttl: int = 900  # 15 minutes
+    refresh_token_ttl: int = 604800  # 1 week
+    base_dir: str = up(up(up(abspath(__file__))))
+    cache_expire_in_seconds: int = 300000
+    log_level: str = 'INFO'
 
     class Config:
         env_file = '.env'

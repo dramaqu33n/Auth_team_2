@@ -152,7 +152,7 @@
 https://www.docker.com/blog/speed-up-your-development-flow-with-these-dockerfile-best-practices/#no-more-latest
 
 3. ✅ [можно лучше] Приложение лучше [запускать](https://github.com/dramaqu33n/Auth_team_2/blob/785f8259115bbbedec14c0ae026503fa431f1443/docker-compose.yml#L38) прямо в Dockerfile. Так как контейнер должен быть "самодостаточным" и не зависеть от других систем по развертыванию приложений. Сегодня используется docker-compose, завтра k8s итд. Чтобы контейнер можно было запускать везде, лучше вынести команду запуска прямо в Dockerfile.
-4. [можно лучше] По умолчанию pydantic [не чувствителен](https://docs.pydantic.dev/latest/usage/settings/#environment-variable-names) ("Case-sensitivity can be turned on through the Config") к регистру при работе с [переменными](https://github.com/dramaqu33n/Auth_team_2/blob/785f8259115bbbedec14c0ae026503fa431f1443/src/core/config.py#LL11C1-L11C30) окружения. Поэтому, если название переменной окружения в классе-конфиге совпадает с названием в .env-файле, то можно дополнительно не указывать `env='REDIS_PORT'`, т.е., достаточно записать вот так:
+4. ✅ [можно лучше] По умолчанию pydantic [не чувствителен](https://docs.pydantic.dev/latest/usage/settings/#environment-variable-names) ("Case-sensitivity can be turned on through the Config") к регистру при работе с [переменными](https://github.com/dramaqu33n/Auth_team_2/blob/785f8259115bbbedec14c0ae026503fa431f1443/src/core/config.py#LL11C1-L11C30) окружения. Поэтому, если название переменной окружения в классе-конфиге совпадает с названием в .env-файле, то можно дополнительно не указывать `env='REDIS_PORT'`, т.е., достаточно записать вот так:
       ```
       class Settings(BaseSettings):
           ...
@@ -160,7 +160,7 @@ https://www.docker.com/blog/speed-up-your-development-flow-with-these-dockerfile
           redis_port: int = 6379
           ...
       ```
-5. [можно лучше] Pydantic под капотом использует [загрузку переменных](https://docs.pydantic.dev/latest/usage/settings/#dotenv-env-support) окружения через библиотеку dotenv. Поэтому [эта](https://github.com/dramaqu33n/Auth_team_2/blob/785f8259115bbbedec14c0ae026503fa431f1443/src/core/config.py#L8) строка избыточна. Можете попробовать ее убрать и у вас все должно работать.
+5. ✅ [можно лучше] Pydantic под капотом использует [загрузку переменных](https://docs.pydantic.dev/latest/usage/settings/#dotenv-env-support) окружения через библиотеку dotenv. Поэтому [эта](https://github.com/dramaqu33n/Auth_team_2/blob/785f8259115bbbedec14c0ae026503fa431f1443/src/core/config.py#L8) строка избыточна. Можете попробовать ее убрать и у вас все должно работать.
 6. [можно лучше] Название типа [токена](https://github.com/dramaqu33n/Auth_team_2/blob/785f8259115bbbedec14c0ae026503fa431f1443/src/db/redis.py#L21) лучше поместить в enum. Использование enum избавляет от опечаток в строковых литералах. Можно случайно прописать кириллический символ в строке и потом очень долго гадать из-за чего возникла ошибка.
 7. [можно лучше] У flask есть встроенная возможность по созданию [кастомных команд](https://flask.palletsprojects.com/en/2.3.x/cli/#custom-commands). Рекомендую к ним присмотреться, чтобы не писать [свои](https://github.com/dramaqu33n/Auth_team_2/blob/785f8259115bbbedec14c0ae026503fa431f1443/Makefile#L13) "велосипеды" :)
 8. [исправить] Не увидел у вас прикрученной доки (swagger) в сервисе. Для решения данной проблемы могу посоветовать [эту](https://github.com/flasgger/flasgger) библиотеку.
