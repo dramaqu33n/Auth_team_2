@@ -47,7 +47,7 @@ services:
       - new_admin_panel_sprint_2_admin_panel_network
     
   nginx:
-    image: nginx:latest
+    image: nginx:1.25
     container_name: nginx_fastapi
     restart: always
     depends_on:
