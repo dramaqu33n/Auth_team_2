@@ -21,7 +21,7 @@ services:
       - postgres_auth_data:/var/lib/postgresql/data 
 
   redis:
-    image: redis
+    image: redis:7
     container_name: redis_auth
     restart: always
     ports:
@@ -43,32 +43,19 @@ services:
       - "5001:5001"
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
-  
-  swagger:
-    image: swaggerapi/swagger-ui
-    container_name: swagger_auth
-    volumes:
-      - ./raw_api_schema.yaml:/swagger.yaml
-    environment:
-      - SWAGGER_JSON=/swagger.yaml
-    ports:
-      - "8080:8080"
     
+  nginx:
+    image: nginx:1.25
+    container_name: nginx_fastapi
+    restart: always
+    depends_on:
+      - auth_service
+    ports:
+      - "80:80"
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
-    
-  # nginx:
-  #   image: nginx:latest
-  #   container_name: nginx_fastapi
-  #   restart: always
-  #   depends_on:
-  #     - api_service
-  #   ports:
-  #     - "80:80"
-  #   networks:
-  #     - new_admin_panel_sprint_2_admin_panel_network
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
 
 volumes:
   postgres_auth_data:

@@ -33,18 +33,6 @@ services:
     restart: always
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
-  
-  swagger:
-    image: swaggerapi/swagger-ui
-    container_name: swagger_auth
-    volumes:
-      - ./raw_api_schema.yaml:/swagger.yaml
-    environment:
-      - SWAGGER_JSON=/swagger.yaml
-    ports:
-      - "8080:8080"
-    networks:
-      - new_admin_panel_sprint_2_admin_panel_network
     
   nginx:
     image: nginx:1.25

@@ -1,6 +1,8 @@
 from flask import Flask, Blueprint
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
+from flasgger import Swagger
+import yaml
 
 from src.api.v1.auth import auth_bp
 from src.api.v1.history import history_bp
@@ -11,6 +13,28 @@ from src.db.model import User
 
 
 app = Flask(__name__)
+
+with open('src/apidocs.yaml', 'r') as stream:
+    template = yaml.safe_load(stream)
+
+swagger_config = {
+    "headers": [
+    ],
+    "specs": [
+        {
+            "endpoint": '/api/v1',
+            "route": '/api/v1',
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    # "static_folder": "static",  # must be set by user
+    "swagger_ui": True,
+    "specs_route": "/apidocs/"
+}
+swagger = Swagger(app, template=template, config=swagger_config)
+
 jwt = JWTManager(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
