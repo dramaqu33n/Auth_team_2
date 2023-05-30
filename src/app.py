@@ -17,22 +17,11 @@ app = Flask(__name__)
 with open('src/apidocs.yaml', 'r') as stream:
     template = yaml.safe_load(stream)
 
-swagger_config = {
-    "headers": [
-    ],
-    "specs": [
-        {
-            "endpoint": '/api/v1',
-            "route": '/api/v1',
-            "rule_filter": lambda rule: True,
-            "model_filter": lambda tag: True,
-        }
-    ],
-    "static_url_path": "/flasgger_static",
-    # "static_folder": "static",  # must be set by user
-    "swagger_ui": True,
-    "specs_route": "/apidocs/"
-}
+swagger_config = Swagger.DEFAULT_CONFIG
+swagger_config['title'] = 'Authorization Service API'  
+swagger_config['specs'][0]['endpoint'] = '/api/v1'
+swagger_config['specs'][0]['route'] = '/api/v1'
+
 swagger = Swagger(app, template=template, config=swagger_config)
 
 jwt = JWTManager(app)
