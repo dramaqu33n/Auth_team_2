@@ -53,6 +53,7 @@ def login():
     username = data.get('username')
     password = data.get('password')
     user = User.query.filter_by(username=username).first()
+
     if user and user.check_password(password):
         login_user(user)
         access_history = AccessHistory(
@@ -115,3 +116,20 @@ def logout():
     logout_user()
     token_storage.invalidate_token(TokenType.ACCESS, user_id, user_agent)
     return jsonify({'message': 'Logout successful, access_token revoked'})
+
+
+@auth_bp.route('/me', methods=['GET'])
+@jwt_required()
+def my_info():
+    user_id = get_jwt_identity()
+    me = db_session.get(User, user_id)
+    my_info = {
+        'username': me.username,
+        'name': me.name,
+        'surname': me.surname,
+        'email': me.email,
+        'account created': me.created,
+        'user_id': me.id
+    }
+
+    return jsonify(my_info), HTTPStatus.OK
