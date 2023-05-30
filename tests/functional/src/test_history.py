@@ -7,6 +7,7 @@ def test_all_history_permission_denied(authenticated_client):
     response = authenticated_client.get(
         'api/v1/history/all',
         headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert json.loads(response.data)['message'] == 'Permission denied'
@@ -16,6 +17,7 @@ def test_all_history(authenticated_superuser):
     response = authenticated_superuser.get(
         'api/v1/history/all',
         headers={'Authorization': f'Bearer {authenticated_superuser.access_token}'},
+        follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.data)
@@ -26,6 +28,7 @@ def test_get_my_history(authenticated_client):
     response = authenticated_client.get(
         'api/v1/history/',
         headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.data)

@@ -1,11 +1,15 @@
-import pytest
 from http import HTTPStatus
+import jwt
+import pytest
+import time
 
 from flask import json
 
 from src.app import app
+from src.core.config import settings
 from src.db.db_config import db_session
 from src.db.model import User
+from src.db.redis import TokenStorage
 from src.logs.log_config import logger
 
 
@@ -108,12 +112,6 @@ def test_login(data, expected_answer):
         assert response_data['refresh_token'] is not None
     else:
         assert response_data['message'] == expected_answer['message']
-    with app.app_context():
-        test_user = db_session.query(User).filter_by(username='ivan.ivanov').first()
-        if test_user:
-            db_session.delete(test_user)
-            db_session.commit()
-            logger.info('Deleted user %s', test_user)
 
 
 @pytest.mark.parametrize(
@@ -162,6 +160,7 @@ def test_password_reset(data, expected_answer):
         }),
         content_type='application/json',
         headers={'Authorization': f'Bearer {response_data["access_token"]}'},
+        follow_redirects=False,
     )
     response_data = json.loads(response.data)
     assert response.status_code == expected_answer['status']
@@ -178,12 +177,6 @@ def test_password_reset(data, expected_answer):
     assert response.status_code == HTTPStatus.OK
     assert response_data['access_token'] is not None
     assert response_data['refresh_token'] is not None
-    with app.app_context():
-        test_user = db_session.query(User).filter_by(username='ivan.ivanov').first()
-        if test_user:
-            db_session.delete(test_user)
-            db_session.commit()
-            logger.info('Deleted user %s', test_user)
 
 
 def test_logout():
@@ -232,9 +225,46 @@ def test_logout():
     assert response_data['access_token'] is not None
     assert response_data['refresh_token'] is not None
     assert response_data['access_token'] != access_token
+
+
+def test_expired_access_token():
+    tester = app.test_client()
+    new_user = {
+        'username': 'ivan.ivanov',
+        'password': 'ivanov666',
+        'email': 'ivan@ivanov.com',
+    }
+    response = tester.post(
+        'api/v1/auth/register',
+        data=json.dumps(new_user),
+        content_type='application/json',
+    )
+    assert response.status_code == HTTPStatus.OK
+    logger.info('Just created user: %s', new_user)
+    response = tester.post(
+        'api/v1/auth/login',
+        data=json.dumps({
+            'username': 'ivan.ivanov',
+            'password': 'ivanov666',
+        }),
+        content_type='application/json',
+    )
+    assert response.status_code == HTTPStatus.OK
+    response_data = json.loads(response.data)
+    assert response_data['access_token'] is not None
+    assert response_data['refresh_token'] is not None
+    access_token = response_data['access_token']
+    payload = jwt.decode(access_token, settings.secret_key, algorithms=['HS256'])
+    payload['exp'] = time.time() - 10
+    expired_token = jwt.encode(payload, settings.secret_key, algorithm='HS256')
     with app.app_context():
-        test_user = db_session.query(User).filter_by(username='ivan.ivanov').first()
-        if test_user:
-            db_session.delete(test_user)
-            db_session.commit()
-            logger.info('Deleted user %s', test_user)
+        token_storage = TokenStorage()
+        token_storage.redis.set(expired_token, 'expired_token', ex=1)
+    response = tester.post(
+        'api/v1/auth/logout',
+        headers={'Authorization': f'Bearer {expired_token}'},
+        follow_redirects=True,
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    response_data = json.loads(response.data)
+    assert response_data['msg'] == 'Token has expired'

@@ -1,5 +1,4 @@
 from http import HTTPStatus
-import pytest
 
 from flask import json
 
@@ -28,6 +27,11 @@ def test_create_role(authenticated_client):
         'api/v1/roles/',
         data=json.dumps({'name': 'test_role'}),
     )
+    if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
+        response = authenticated_client.get(
+            response.headers['Location'],
+            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        )
     assert response.status_code == HTTPStatus.CREATED
     response_data = json.loads(response.data)
     assert response_data['message'] == 'Role created successfully'
@@ -50,7 +54,13 @@ def test_get_role(authenticated_client):
     response = authenticated_client.get(
         'api/v1/roles/',
         headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        follow_redirects=True,
     )
+    if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
+        response = authenticated_client.get(
+            response.headers['Location'],
+            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        )
     assert response.status_code == HTTPStatus.OK
     roles = json.loads(response.data)
     expected_roles = ('superuser', 'admin', 'user', 'guest')
@@ -71,6 +81,11 @@ def test_update_role(authenticated_client):
         'api/v1/roles/',
         data=json.dumps({'name': 'test_role'}),
     )
+    if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
+        response = authenticated_client.get(
+            response.headers['Location'],
+            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        )
     assert response.status_code == HTTPStatus.CREATED
     response_data = json.loads(response.data)
     assert response_data['message'] == 'Role created successfully'
@@ -99,6 +114,11 @@ def test_delete_role(authenticated_client):
         'api/v1/roles/',
         data=json.dumps({'name': 'test_role'}),
     )
+    if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
+        response = authenticated_client.get(
+            response.headers['Location'],
+            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        )
     assert response.status_code == HTTPStatus.CREATED
     response_data = json.loads(response.data)
     assert response_data['message'] == 'Role created successfully'

@@ -18,7 +18,7 @@ with open('src/apidocs.yaml', 'r') as stream:
     template = yaml.safe_load(stream)
 
 swagger_config = Swagger.DEFAULT_CONFIG
-swagger_config['title'] = 'Authorization Service API'  
+swagger_config['title'] = 'Authorization Service API'
 swagger_config['specs'][0]['endpoint'] = '/api/v1'
 swagger_config['specs'][0]['route'] = '/api/v1'
 
@@ -31,6 +31,12 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def user_loader(user_id):
+    return db_session.get(User, user_id)
+
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    user_id = jwt_data["sub"]
     return db_session.get(User, user_id)
 
 

@@ -1,4 +1,10 @@
 from src.app import app
+from src.db.db_config import db_session
+
+from src.db.model import User
+from src.logs.log_config import logger
+from http import HTTPStatus
+from time import sleep
 import pytest
 from flask import json
 from src.core.config import settings
@@ -45,3 +51,13 @@ def authenticated_superuser():
     access_token = response_data['access_token']
     tester.access_token = access_token
     return tester
+
+@pytest.fixture(autouse=True)
+def cleanup():
+    yield
+    with app.app_context():
+        test_user = db_session.query(User).filter_by(username='ivan.ivanov').first()
+        if test_user:
+            db_session.delete(test_user)
+            db_session.commit()
+            logger.info('Deleted user %s', test_user)

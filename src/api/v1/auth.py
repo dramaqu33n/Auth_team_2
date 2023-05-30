@@ -1,5 +1,4 @@
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
 from flask import Blueprint, request, jsonify
@@ -103,9 +102,28 @@ def password_reset():
         user.set_password(new_password)
         user.modified = datetime.utcnow()
         db_session.commit()
-        return jsonify({'message': 'Password reset successfully'})
+        return jsonify({'message': 'Password reset successfully'}), HTTPStatus.OK
     else:
         return jsonify({'message': 'User not found'}), HTTPStatus.NOT_FOUND
+
+
+@auth_bp.route('/refresh', methods=['GET'])
+@jwt_required()
+def refresh():
+    current_user = get_jwt_identity()
+    token_storage.invalidate_token(
+        TokenType.ACCESS,
+        str(current_user.id),
+        request.user_agent.string,
+    )
+    new_token = create_access_token(identity=current_user)
+    token_storage.store_token(
+        TokenType.ACCESS,
+        str(current_user.id),
+        request.user_agent.string,
+        new_token,
+    )
+    return jsonify({'access_token': new_token}), HTTPStatus.OK
 
 
 @auth_bp.route('/logout', methods=['POST'])
