@@ -1,8 +1,11 @@
 import hashlib
-
+from enum import Enum
 from redis import StrictRedis
 
 from src.core.config import settings
+
+class TokenType(Enum):
+    ACCESS = 'access'
 
 
 class TokenStorage:
@@ -18,7 +21,7 @@ class TokenStorage:
 
     def store_token(self, token_type, user_id, user_agent, token):
         key = self.generate_key(token_type, user_id, user_agent)
-        if token_type == 'access':
+        if token_type == TokenType.ACCESS:
             self.redis.set(key, token, settings.access_token_ttl)
         else:
             self.redis.set(key, token, settings.refresh_token_ttl)
