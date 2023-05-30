@@ -6,6 +6,7 @@ from src.core.config import settings
 
 class TokenType(Enum):
     ACCESS = 'access'
+    REFRESH = 'refresh'
 
 
 class TokenStorage:

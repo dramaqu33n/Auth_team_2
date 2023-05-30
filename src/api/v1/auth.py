@@ -9,7 +9,7 @@ from flask_login import login_user, logout_user
 
 from src.db.db_config import Base, engine, db_session
 from src.db.model import User, AccessHistory, Role
-from src.db.redis import TokenStorage
+from src.db.redis import TokenStorage, TokenType
 
 
 auth_bp = Blueprint('auth', __name__)
@@ -72,13 +72,13 @@ def login():
         )
         user_agent = request.headers.get("User-Agent")
         token_storage.store_token(
-            "access",
+            TokenType.ACCESS,
             str(user.id),
             user_agent,
             access_token,
         )
         token_storage.store_token(
-            "refresh",
+            TokenType.REFRESH,
             str(user.id),
             user_agent,
             refresh_token,
@@ -113,5 +113,5 @@ def logout():
     user_id = get_jwt_identity()
     user_agent = request.headers.get("User-Agent")
     logout_user()
-    token_storage.invalidate_token('access', user_id, user_agent)
+    token_storage.invalidate_token(TokenType.ACCESS, user_id, user_agent)
     return jsonify({'message': 'Logout successful, access_token revoked'})
