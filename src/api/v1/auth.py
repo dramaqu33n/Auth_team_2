@@ -108,18 +108,18 @@ def password_reset():
 
 
 @auth_bp.route('/refresh', methods=['GET'])
-@jwt_required()
+@jwt_required(refresh=True)
 def refresh():
     current_user = get_jwt_identity()
     token_storage.invalidate_token(
         TokenType.ACCESS,
-        str(current_user.id),
+        current_user,
         request.user_agent.string,
     )
     new_token = create_access_token(identity=current_user)
     token_storage.store_token(
         TokenType.ACCESS,
-        str(current_user.id),
+        current_user,
         request.user_agent.string,
         new_token,
     )

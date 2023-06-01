@@ -253,6 +253,7 @@ def test_expired_access_token():
     response_data = json.loads(response.data)
     assert response_data['access_token'] is not None
     assert response_data['refresh_token'] is not None
+    refresh_token = response_data['refresh_token']
     access_token = response_data['access_token']
     payload = jwt.decode(access_token, settings.secret_key, algorithms=['HS256'])
     payload['exp'] = time.time() - 10
@@ -263,8 +264,16 @@ def test_expired_access_token():
     response = tester.post(
         'api/v1/auth/logout',
         headers={'Authorization': f'Bearer {expired_token}'},
-        follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     response_data = json.loads(response.data)
     assert response_data['msg'] == 'Token has expired'
+    response = tester.get(
+        'api/v1/auth/refresh',
+        headers={'Authorization': f'Bearer {refresh_token}'},
+    )
+    assert response.status_code == HTTPStatus.OK
+    response_data = json.loads(response.data)
+    assert response_data['access_token'] is not None
+    new_access_token = response_data['access_token']
+    assert new_access_token != access_token
