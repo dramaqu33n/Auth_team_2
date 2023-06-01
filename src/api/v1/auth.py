@@ -52,42 +52,43 @@ def login():
     username = data.get('username')
     password = data.get('password')
     user = User.query.filter_by(username=username).first()
-
-    if user and user.check_password(password):
-        login_user(user)
-        access_history = AccessHistory(
-            user_id=user.id,
-            action='login',
-            created=datetime.utcnow()
-        )
-        db_session.add(access_history)
-        db_session.commit()
-        access_token = create_access_token(
-            identity=str(user.id),
-            expires_delta=timedelta(minutes=15),
-        )
-        refresh_token = create_refresh_token(
-            identity=str(user.id),
-            expires_delta=timedelta(days=30),
-        )
-        user_agent = request.headers.get("User-Agent")
-        token_storage.store_token(
-            TokenType.ACCESS,
-            str(user.id),
-            user_agent,
-            access_token,
-        )
-        token_storage.store_token(
-            TokenType.REFRESH,
-            str(user.id),
-            user_agent,
-            refresh_token,
-        )
+    if not user or not user.check_password(password):
         return jsonify(
-            access_token=access_token,
-            refresh_token=refresh_token,
-        ), HTTPStatus.OK
-    return jsonify({'message': 'Invalid username or password'}), HTTPStatus.UNAUTHORIZED
+            {'message': 'Invalid username or password'},
+        ), HTTPStatus.UNAUTHORIZED
+    login_user(user)
+    access_history = AccessHistory(
+        user_id=user.id,
+        action='login',
+        created=datetime.utcnow()
+    )
+    db_session.add(access_history)
+    db_session.commit()
+    access_token = create_access_token(
+        identity=str(user.id),
+        expires_delta=timedelta(minutes=15),
+    )
+    refresh_token = create_refresh_token(
+        identity=str(user.id),
+        expires_delta=timedelta(days=30),
+    )
+    user_agent = request.headers.get("User-Agent")
+    token_storage.store_token(
+        TokenType.ACCESS,
+        str(user.id),
+        user_agent,
+        access_token,
+    )
+    token_storage.store_token(
+        TokenType.REFRESH,
+        str(user.id),
+        user_agent,
+        refresh_token,
+    )
+    return jsonify(
+        access_token=access_token,
+        refresh_token=refresh_token,
+    ), HTTPStatus.OK
 
 
 @auth_bp.route('/password-reset', methods=['POST'])
