@@ -40,3 +40,13 @@ def test_get_my_history(authenticated_client):
         access_history_user_ids.append(access_history_record['user_id'])
     assert len(set(access_history_records)) == len(response_data)
     assert len(set(access_history_user_ids)) == 1
+
+def test_paginated_history(authenticated_superuser):
+    response = authenticated_superuser.get(
+        'api/v1/history/?page=1&per_page=5',
+        headers={'Authorization': f'Bearer {authenticated_superuser.access_token}'},
+        follow_redirects=True,
+    )
+    assert response.status_code == HTTPStatus.OK
+    response_data = json.loads(response.data)
+    assert len(response_data) == 5
