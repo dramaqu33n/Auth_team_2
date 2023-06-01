@@ -1,4 +1,4 @@
-from src.db.model import AccessHistory, UserRole, Role
+from src.db.model import AccessHistory, User
 from http import HTTPStatus
 
 from flask import Blueprint, jsonify
@@ -14,9 +14,9 @@ Base.metadata.bind = engine
 @jwt_required()
 def get_my_access_history():
     user_id = get_jwt_identity()
-    u_r = db_session.query(UserRole).filter(UserRole.user_id == user_id).first()
-    role = db_session.query(Role).filter(Role.id == u_r.role_id).first()
-    if role.role_name != 'guest':
+    user = db_session.query(User).filter(User.id == user_id).first()
+    roles = [role.role_name for role in user.roles]
+    if roles[0] != 'guest':
         access_history_records = db_session.query(AccessHistory).filter(
             AccessHistory.user_id == user_id
         ).all()
@@ -38,9 +38,9 @@ def get_my_access_history():
 @jwt_required()
 def get_all_access_history():
     user_id = get_jwt_identity()
-    u_r = db_session.query(UserRole).filter(UserRole.user_id == user_id).first()
-    role = db_session.query(Role).filter(Role.id == u_r.role_id).first()
-    if role.role_name not in ('superuser', 'admin'):
+    user = db_session.query(User).filter(User.id == user_id).first()
+    roles = [role.role_name for role in user.roles]
+    if not set(roles) & set(('superuser', 'admin')):
         return jsonify({'message': 'Permission denied'}), HTTPStatus.FORBIDDEN
     access_history_records = db_session.query(AccessHistory).all()
     serialized_access_history_records = [
