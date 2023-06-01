@@ -67,10 +67,5 @@ class AccessHistory(Base):
         return f'''<User {self.user_id}, Action: {self.action}, Created: {self.created}> '''
 
 
-class Alembic(Base):
-    __tablename__ = 'alembic_version'
-    version_num = Column(String(32), primary_key=True)
-
-
 if __name__ == '__main__':
     Base.metadata.create_all(bind=engine)
