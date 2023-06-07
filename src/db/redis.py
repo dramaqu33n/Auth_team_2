@@ -21,12 +21,16 @@ class TokenStorage:
         key = f"{token_type}:{user_id}:{user_agent}"
         return hashlib.sha256(key.encode()).hexdigest()
 
-    def store_token(self, token_type, user_id, user_agent, token):
+    def store_token(self, token_type, user_id, user_agent, token, ttl=None):
         key = self.generate_key(token_type, user_id, user_agent)
         if token_type == TokenType.ACCESS:
-            self.redis.set(key, token, settings.access_token_ttl)
+            if not ttl:
+                ttl = settings.access_token_ttl
+            self.redis.set(key, token, ttl)
         else:
-            self.redis.set(key, token, settings.refresh_token_ttl)
+            if not ttl:
+                ttl = settings.refresh_token_ttl
+            self.redis.set(key, token, ttl)
 
     def get_token(self, token_type, user_id, user_agent):
         key = self.generate_key(token_type, user_id, user_agent)
