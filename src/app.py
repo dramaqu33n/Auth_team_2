@@ -1,11 +1,13 @@
+import yaml
+
+from flasgger import Swagger
 from flask import Flask, Blueprint
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
-from flasgger import Swagger
-import yaml
 
 from src.api.v1.auth import auth_bp
 from src.api.v1.history import history_bp
+from src.api.v1.oauth import oauth_bp, oauth
 from src.api.v1.roles import roles_bp
 from src.core.config import settings
 from src.db.db_config import db_session
@@ -42,12 +44,15 @@ def user_lookup_callback(_jwt_header, jwt_data):
 
 api_bp = Blueprint('api_v1', __name__, url_prefix='/api/v1')
 api_bp.register_blueprint(auth_bp, url_prefix='/auth')
+api_bp.register_blueprint(oauth_bp, url_prefix='/oauth')
 api_bp.register_blueprint(roles_bp, url_prefix='/roles')
 api_bp.register_blueprint(history_bp, url_prefix='/history')
 
 app.register_blueprint(api_bp)
 
 app.secret_key = settings.secret_key
+oauth.init_app(app)
+
 
 if __name__ == '__main__':
     app.run()
