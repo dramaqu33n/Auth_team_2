@@ -22,6 +22,12 @@ def do_init_migration() -> bool:
     command.upgrade(alembic_cfg, "head")
     return True
 
+def do_second_migration() -> bool:
+    alembic_cfg = Config("alembic.ini")
+    command.revision(alembic_cfg, autogenerate=True, message="Adding user agent")
+    command.upgrade(alembic_cfg, "head")
+    return True
 
 if __name__ == '__main__':
-    do_init_migration()
+    # do_init_migration()
+    do_second_migration()

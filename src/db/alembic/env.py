@@ -8,18 +8,21 @@ from alembic import context
 from src.core.config import settings
 from src.db.db_config import Base
 
+from src.core.log_config import logger
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+# if config.config_file_name is not None:
+#     fileConfig(config.config_file_name)
 
 
 target_metadata = Base.metadata
 db_uri = f'postgresql://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}'
+logger.info('ALEMBIC DB URI: %s', db_uri)
 config.set_main_option('sqlalchemy.url', db_uri)
 config.set_main_option('prepend_sys_path', settings.base_dir)
 config.set_main_option('script_location', 'src/db/alembic')
