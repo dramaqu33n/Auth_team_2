@@ -36,3 +36,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+logger.info('Settings base_dir: {%s}', settings.base_dir)
