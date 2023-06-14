@@ -1,7 +1,7 @@
 import yaml
 
 from flasgger import Swagger
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, request
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 
@@ -14,8 +14,44 @@ from src.core.config import settings
 from src.db.db_config import db_session
 from src.db.model import User
 
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.resources import Resource       
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+
+
+def configure_tracer() -> None:
+    resource = Resource(attributes={
+        "service.name": "auth_service"
+    })
+    trace.set_tracer_provider(TracerProvider(resource=resource))
+    trace.get_tracer_provider().add_span_processor(
+        BatchSpanProcessor(
+            JaegerExporter(
+                agent_host_name=settings.jaeger_host,
+                agent_port=settings.jaeger_port,
+            )
+        )
+    )
+    trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+
+configure_tracer()
+
 
 app = Flask(__name__)
+FlaskInstrumentor().instrument_app(app) 
+
+@app.before_request
+def before_request():
+    request_id = request.headers.get('X-Request-Id')
+    tracer = trace.get_tracer(__name__)
+    span = tracer.start_span('HTTP Request ID')
+    span.set_attribute('http.request_id', request_id)
+    span.end()
+    if not request_id:
+        raise RuntimeError('request id is required') 
 
 with open('src/apidocs.yaml', 'r') as stream:
     template = yaml.safe_load(stream)
