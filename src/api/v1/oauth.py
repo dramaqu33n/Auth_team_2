@@ -54,7 +54,7 @@ def oauth_callback():
         return jsonify({'message': 'OAuth authorization failed'}), HTTPStatus.UNAUTHORIZED
     access_token = token['access_token']
     expires_in = token['expires_in']
-    user_agent = request.headers.get("User-Agent")
+    user_agent = request.headers.get('User-Agent')
     user_id = get_jwt_identity()
     token_storage.store_token(
         TokenType.ACCESS,

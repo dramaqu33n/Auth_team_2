@@ -75,7 +75,7 @@ def login():
         identity=str(user.id),
         expires_delta=timedelta(days=30),
     )
-    
+    user_agent = request.headers.get('User-Agent')
     token_storage.store_token(
         TokenType.ACCESS,
         str(user.id),
@@ -134,7 +134,7 @@ def refresh():
 @jwt_required()
 def logout():
     user_id = get_jwt_identity()
-    user_agent = request.headers.get("User-Agent")
+    user_agent = request.headers.get('User-Agent')
     logout_user()
     token_storage.invalidate_token(TokenType.ACCESS, user_id, user_agent)
     return jsonify({'message': 'Logout successful, access_token revoked'})
@@ -153,5 +153,4 @@ def my_info():
         'account created': me.created,
         'user_id': me.id
     }
-
     return jsonify(my_info), HTTPStatus.OK
