@@ -28,6 +28,13 @@ def do_second_migration() -> bool:
     command.upgrade(alembic_cfg, "head")
     return True
 
+def do_partitioning() -> bool:
+    alembic_cfg = Config("alembic.ini")
+    command.revision(alembic_cfg, autogenerate=True, message="Access_history partioning")
+    command.upgrade(alembic_cfg, "head")
+    return True
+
 if __name__ == '__main__':
     # do_init_migration()
-    do_second_migration()
+    # do_second_migration()
+    do_partitioning()

@@ -57,10 +57,13 @@ def login():
             {'message': 'Invalid username or password'},
         ), HTTPStatus.UNAUTHORIZED
     login_user(user)
+    user_agent = request.headers.get("User-Agent")
     access_history = AccessHistory(
         user_id=user.id,
         action='login',
-        created=datetime.utcnow()
+        created=datetime.utcnow(),
+        user_agent=user_agent,
+
     )
     db_session.add(access_history)
     db_session.commit()
@@ -72,7 +75,7 @@ def login():
         identity=str(user.id),
         expires_delta=timedelta(days=30),
     )
-    user_agent = request.headers.get("User-Agent")
+    
     token_storage.store_token(
         TokenType.ACCESS,
         str(user.id),
