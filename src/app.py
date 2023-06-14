@@ -6,6 +6,7 @@ from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 
 from src.api.v1.auth import auth_bp
+from src.api.v1.health import health_bp
 from src.api.v1.history import history_bp
 from src.api.v1.oauth import oauth_bp, oauth
 from src.api.v1.roles import roles_bp
@@ -47,6 +48,7 @@ api_bp.register_blueprint(auth_bp, url_prefix='/auth')
 api_bp.register_blueprint(oauth_bp, url_prefix='/oauth')
 api_bp.register_blueprint(roles_bp, url_prefix='/roles')
 api_bp.register_blueprint(history_bp, url_prefix='/history')
+api_bp.register_blueprint(health_bp, url_prefix='/health')
 
 app.register_blueprint(api_bp)
 
