@@ -4,6 +4,7 @@ from flasgger import Swagger
 from flask import Flask, Blueprint, request
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
+from flask_limiter.util import get_remote_address
 
 from src.api.v1.auth import auth_bp
 from src.api.v1.health import health_bp
@@ -20,6 +21,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from flask_limiter import Limiter
 
 
 def configure_tracer() -> None:
@@ -39,9 +41,16 @@ def configure_tracer() -> None:
 
 configure_tracer()
 
-
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app) 
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "5 per hour"],
+    storage_uri=f"redis://{settings.redis_host}:{settings.redis_port}",
+)
+
 
 @app.before_request
 def before_request():
