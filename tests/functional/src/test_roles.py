@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import random
 
 from flask import json
 
@@ -14,7 +15,11 @@ from tests.functional.utils import make_authenticated_put
 def test_list_roles(authenticated_client):
     response = authenticated_client.get(
         'api/v1/roles/',
-        headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        headers={
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.OK
     roles = json.loads(response.data)
@@ -26,18 +31,30 @@ def test_create_role(authenticated_client):
         authenticated_client,
         'api/v1/roles/',
         data=json.dumps({'name': 'test_role'}),
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
         response = authenticated_client.get(
             response.headers['Location'],
-            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+            headers={
+                'Authorization': f'Bearer {authenticated_client.access_token}',
+                'Content-Type': 'application/json',
+                'X-Request-Id': str(random.randint(1, 1000)),
+            },
         )
     assert response.status_code == HTTPStatus.CREATED
     response_data = json.loads(response.data)
     assert response_data['message'] == 'Role created successfully'
     response = authenticated_client.get(
         'api/v1/roles/',
-        headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        headers={
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.OK
     roles = json.loads(response.data)
@@ -53,13 +70,21 @@ def test_create_role(authenticated_client):
 def test_get_role(authenticated_client):
     response = authenticated_client.get(
         'api/v1/roles/',
-        headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        headers={
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
         follow_redirects=True,
     )
     if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
         response = authenticated_client.get(
             response.headers['Location'],
-            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+            headers={
+                'Authorization': f'Bearer {authenticated_client.access_token}',
+                'Content-Type': 'application/json',
+                'X-Request-Id': str(random.randint(1, 1000)),
+            },
         )
     assert response.status_code == HTTPStatus.OK
     roles = json.loads(response.data)
@@ -68,7 +93,11 @@ def test_get_role(authenticated_client):
     for role in roles:
         response = authenticated_client.get(
             f'api/v1/roles/{role["id"]}',
-            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+            headers={
+                'Authorization': f'Bearer {authenticated_client.access_token}',
+                'Content-Type': 'application/json',
+                'X-Request-Id': str(random.randint(1, 1000)),
+            },
         )
         assert response.status_code == HTTPStatus.OK
         got_roles.append(role['name'])
@@ -80,11 +109,20 @@ def test_update_role(authenticated_client):
         authenticated_client,
         'api/v1/roles/',
         data=json.dumps({'name': 'test_role'}),
+        headers={
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
         response = authenticated_client.get(
             response.headers['Location'],
-            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+            headers={
+                'Authorization': f'Bearer {authenticated_client.access_token}',
+                'Content-Type': 'application/json',
+                'X-Request-Id': str(random.randint(1, 1000)),
+            },
         )
     assert response.status_code == HTTPStatus.CREATED
     response_data = json.loads(response.data)
@@ -96,6 +134,11 @@ def test_update_role(authenticated_client):
         authenticated_client,
         f'api/v1/roles/{role_id}',
         data=json.dumps({'name': 'test_role'}),
+        headers={
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.data)
@@ -113,11 +156,20 @@ def test_delete_role(authenticated_client):
         authenticated_client,
         'api/v1/roles/',
         data=json.dumps({'name': 'test_role'}),
+        headers={
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     if response.status_code == HTTPStatus.PERMANENT_REDIRECT:
         response = authenticated_client.get(
             response.headers['Location'],
-            headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+            headers={
+                'Authorization': f'Bearer {authenticated_client.access_token}',
+                'Content-Type': 'application/json',
+                'X-Request-Id': str(random.randint(1, 1000)),
+            },
         )
     assert response.status_code == HTTPStatus.CREATED
     response_data = json.loads(response.data)
@@ -129,6 +181,11 @@ def test_delete_role(authenticated_client):
         authenticated_client,
         f'api/v1/roles/{role_id}',
         data=json.dumps({'name': 'test_role'}),
+        headers={
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.data)

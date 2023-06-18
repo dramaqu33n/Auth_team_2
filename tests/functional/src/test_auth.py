@@ -1,6 +1,7 @@
 from http import HTTPStatus
 import jwt
 import pytest
+import random
 import time
 
 from flask import json
@@ -49,7 +50,10 @@ def test_registration(data, expected_answer):
     response = tester.post(
         'api/v1/auth/register',
         data=json.dumps(data),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     response_data = json.loads(response.data)
     assert response.status_code == expected_answer['status']
@@ -96,14 +100,20 @@ def test_login(data, expected_answer):
     response = tester.post(
         'api/v1/auth/register',
         data=json.dumps(new_user),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     logger.info('Just created user: %s', new_user)
     logger.info('DATA: %s', data)
     response = tester.post(
         'api/v1/auth/login',
         data=json.dumps(data),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     response_data = json.loads(response.data)
     assert response.status_code == expected_answer['status']
@@ -138,7 +148,10 @@ def test_password_reset(data, expected_answer):
     response = tester.post(
         'api/v1/auth/register',
         data=json.dumps(new_user),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     logger.info('Just created user: %s', new_user)
     response = tester.post(
@@ -147,7 +160,10 @@ def test_password_reset(data, expected_answer):
             'username': 'ivan.ivanov',
             'password': 'ivanov666',
         }),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     response_data = json.loads(response.data)
     assert response.status_code == HTTPStatus.OK
@@ -158,8 +174,11 @@ def test_password_reset(data, expected_answer):
         data=json.dumps({
             'new_password': data['new_password'],
         }),
-        content_type='application/json',
-        headers={'Authorization': f'Bearer {response_data["access_token"]}'},
+        headers={
+            'Authorization': f'Bearer {response_data["access_token"]}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
         follow_redirects=False,
     )
     response_data = json.loads(response.data)
@@ -171,7 +190,10 @@ def test_password_reset(data, expected_answer):
             'username': 'ivan.ivanov',
             'password': data['new_password'],
         }),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     response_data = json.loads(response.data)
     assert response.status_code == HTTPStatus.OK
@@ -189,7 +211,10 @@ def test_logout():
     response = tester.post(
         'api/v1/auth/register',
         data=json.dumps(new_user),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     logger.info('Just created user: %s', new_user)
     response = tester.post(
@@ -198,7 +223,10 @@ def test_logout():
             'username': 'ivan.ivanov',
             'password': 'ivanov666',
         }),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     response_data = json.loads(response.data)
     assert response.status_code == HTTPStatus.OK
@@ -207,7 +235,11 @@ def test_logout():
     access_token = response_data['access_token']
     response = tester.post(
         'api/v1/auth/logout',
-        headers={'Authorization': f'Bearer {access_token}'},
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     response_data = json.loads(response.data)
     assert response.status_code == HTTPStatus.OK
@@ -218,7 +250,10 @@ def test_logout():
             'username': 'ivan.ivanov',
             'password': 'ivanov666',
         }),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     response_data = json.loads(response.data)
     assert response.status_code == HTTPStatus.OK
@@ -237,7 +272,10 @@ def test_expired_access_token():
     response = tester.post(
         'api/v1/auth/register',
         data=json.dumps(new_user),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.OK
     logger.info('Just created user: %s', new_user)
@@ -247,7 +285,10 @@ def test_expired_access_token():
             'username': 'ivan.ivanov',
             'password': 'ivanov666',
         }),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.data)
@@ -263,14 +304,22 @@ def test_expired_access_token():
         token_storage.redis.set(expired_token, 'expired_token', ex=1)
     response = tester.post(
         'api/v1/auth/logout',
-        headers={'Authorization': f'Bearer {expired_token}'},
+        headers={
+            'Authorization': f'Bearer {expired_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     response_data = json.loads(response.data)
     assert response_data['msg'] == 'Token has expired'
     response = tester.get(
         'api/v1/auth/refresh',
-        headers={'Authorization': f'Bearer {refresh_token}'},
+        headers={
+            'Authorization': f'Bearer {refresh_token}',
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
     )
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.data)

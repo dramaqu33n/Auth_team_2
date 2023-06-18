@@ -1,13 +1,16 @@
-from src.app import app
-from src.db.db_config import db_session
-
-from src.db.model import User
-from src.logs.log_config import logger
 from http import HTTPStatus
 from time import sleep
 import pytest
+import random
+
 from flask import json
+
+from src.app import app
 from src.core.config import settings
+from src.db.db_config import db_session
+from src.db.model import User
+from src.logs.log_config import logger
+
 
 @pytest.fixture
 def authenticated_client():
@@ -20,7 +23,10 @@ def authenticated_client():
     response = tester.post(
         'api/v1/auth/register',
         data=json.dumps(new_user),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        }
     )
     response = tester.post(
         'api/v1/auth/login',
@@ -28,7 +34,10 @@ def authenticated_client():
             'username': 'ivan.ivanov',
             'password': 'ivanov666',
         }),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        }
     )
     response_data = json.loads(response.data)
     access_token = response_data['access_token']
@@ -45,7 +54,10 @@ def authenticated_superuser():
             'username': settings.superuser_name,
             'password': settings.superuser_pass,
         }),
-        content_type='application/json',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        }
     )
     response_data = json.loads(response.data)
     access_token = response_data['access_token']

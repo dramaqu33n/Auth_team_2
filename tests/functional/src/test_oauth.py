@@ -1,12 +1,13 @@
 from http import HTTPStatus
-import jwt
 from os import getenv
-import pytest
-import time
 from urllib.parse import urlparse, parse_qs
+import jwt
+import pytest
+import random
+import time
 
-from flask import json
 from dotenv import load_dotenv
+from flask import json
 
 from src.app import app
 from src.core.config import settings
@@ -21,7 +22,13 @@ load_dotenv()
 
 def test_vk_login():
     tester = app.test_client()
-    response = tester.get('api/v1/oauth/login/vk')
+    response = tester.get(
+        'api/v1/oauth/login/vk',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
+    )
     assert response.status_code == HTTPStatus.FOUND
     location = response.location
     assert location is not None
@@ -30,7 +37,13 @@ def test_vk_login():
 
 def test_yandex_login():
     tester = app.test_client()
-    response = tester.get('api/v1/oauth/login/yandex')
+    response = tester.get(
+        'api/v1/oauth/login/yandex',
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+        },
+    )
     assert response.status_code == HTTPStatus.FOUND
     location = response.location
     assert location is not None

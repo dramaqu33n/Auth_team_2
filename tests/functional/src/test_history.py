@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import random
 
 from flask import json
 
@@ -6,7 +7,11 @@ from flask import json
 def test_all_history_permission_denied(authenticated_client):
     response = authenticated_client.get(
         'api/v1/history/all',
-        headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+        },
         follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.FORBIDDEN
@@ -16,7 +21,11 @@ def test_all_history_permission_denied(authenticated_client):
 def test_all_history(authenticated_superuser):
     response = authenticated_superuser.get(
         'api/v1/history/all',
-        headers={'Authorization': f'Bearer {authenticated_superuser.access_token}'},
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+            'Authorization': f'Bearer {authenticated_superuser.access_token}',
+        },
         follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.OK
@@ -27,7 +36,11 @@ def test_all_history(authenticated_superuser):
 def test_get_my_history(authenticated_client):
     response = authenticated_client.get(
         'api/v1/history/',
-        headers={'Authorization': f'Bearer {authenticated_client.access_token}'},
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+            'Authorization': f'Bearer {authenticated_client.access_token}',
+        },
         follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.OK
@@ -44,7 +57,11 @@ def test_get_my_history(authenticated_client):
 def test_paginated_history(authenticated_superuser):
     response = authenticated_superuser.get(
         'api/v1/history/?page=1&per_page=5',
-        headers={'Authorization': f'Bearer {authenticated_superuser.access_token}'},
+        headers={
+            'Content-Type': 'application/json',
+            'X-Request-Id': str(random.randint(1, 1000)),
+            'Authorization': f'Bearer {authenticated_superuser.access_token}',
+        },
         follow_redirects=True,
     )
     assert response.status_code == HTTPStatus.OK
