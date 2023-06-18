@@ -137,7 +137,7 @@ def logout():
     user_agent = request.headers.get('User-Agent')
     logout_user()
     token_storage.invalidate_token(TokenType.ACCESS, user_id, user_agent)
-    return jsonify({'message': 'Logout successful, access_token revoked'})
+    return jsonify({'message': 'Logout successful, access_token revoked'}), HTTPStatus.OK
 
 
 @auth_bp.route('/me', methods=['GET'])
