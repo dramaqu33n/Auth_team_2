@@ -13,10 +13,10 @@ init_setup:
 	export ENV_MODE=.env.local; python3 -m src.db.superuser
 	
 up:
-	export ENV_MODE=.env; docker compose up --build
+	docker compose up --build
 
 up_test:
-	export ENV_MODE=.env; docker compose -f docker-compose.dev.yml up --build
+	docker compose -f docker-compose.dev.yml up --build
 
 l_test:
 	DB_HOST=localhost pytest tests/functional/src --log-cli-level=INFO
