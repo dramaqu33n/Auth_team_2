@@ -1,10 +1,11 @@
 import yaml
 
 from flasgger import Swagger
-from flask import Flask, Blueprint, request
+from flask import Flask, Blueprint, request, jsonify
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_limiter.util import get_remote_address
+from flask_limiter import Limiter
 
 from src.api.v1.auth import auth_bp
 from src.api.v1.health import health_bp
@@ -21,7 +22,6 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
-from flask_limiter import Limiter
 
 
 def configure_tracer() -> None:
@@ -51,7 +51,7 @@ def create_app():
         Limiter(
             get_remote_address,
             app=app,
-            default_limits=["200 per day", "10 per hour"],
+            default_limits=["200 per day", "100 per hour"],
             storage_uri=f"redis://{settings.redis_host}:{settings.redis_port}",
         )
 
@@ -108,6 +108,16 @@ app.register_blueprint(api_bp)
 app.secret_key = settings.secret_key
 oauth.init_app(app)
 
+@app.errorhandler(500)
+def internal_server_error_handler(e):
+    original_error = str(e.original_exception) if e.original_exception else ""
+    response = {
+        "error": "Что-то пошло не так",
+        "description": "Мы работаем, чтобы это исправить",
+        # "original error": original_error
+    }
+
+    return jsonify(response), 500
 
 if __name__ == '__main__':
     app.run()
