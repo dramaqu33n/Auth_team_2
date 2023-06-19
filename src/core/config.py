@@ -15,6 +15,8 @@ logger.info('REDIS HOST: %s', os.getenv('REDIS_HOST'))
 
 class Settings(BaseSettings):
     project_name: str
+    enable_tracer: str
+    enable_limiter: str
     db_host: str
     db_port: int = 5432
     db_name: str

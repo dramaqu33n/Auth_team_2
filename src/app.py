@@ -39,17 +39,25 @@ def configure_tracer() -> None:
     )
     trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
 
-configure_tracer()
 
-app = Flask(__name__)
-FlaskInstrumentor().instrument_app(app) 
+def create_app():
+    app = Flask(__name__)
 
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "100 per hour"],
-    storage_uri=f"redis://{settings.redis_host}:{settings.redis_port}",
-)
+    if settings.enable_tracer.lower() in ['true', '1', 'yes']:
+        configure_tracer()
+        FlaskInstrumentor().instrument_app(app)
+
+    if settings.enable_limiter.lower() in ['true', '1', 'yes']:
+        Limiter(
+            get_remote_address,
+            app=app,
+            default_limits=["200 per day", "10 per hour"],
+            storage_uri=f"redis://{settings.redis_host}:{settings.redis_port}",
+        )
+
+    return app
+
+app = create_app()
 
 
 @app.before_request
