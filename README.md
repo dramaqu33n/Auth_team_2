@@ -145,7 +145,7 @@
 
 ✅ 2. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L12) не нужно копировать .env внутрь образа, пользуйтесь возможностью передачи значений с помощью переменных окружения - https://docs.docker.com/compose/environment-variables/set-environment-variables/
 
-3. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L22) можно добавить `RUN chmod +x /startup.sh`, например чтоб 100% у файла были права на выполнение.
+✅ 3. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L22) можно добавить `RUN chmod +x /startup.sh`, например чтоб 100% у файла были права на выполнение.
 
 4. Для целей разработки и тестирования давайте сделаем возможность выключать трассировщик и лимитер с помощью настроек через переменные окружения.
 
