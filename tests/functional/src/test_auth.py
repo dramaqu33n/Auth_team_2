@@ -88,6 +88,16 @@ def test_registration(data, expected_answer):
                 'message': 'Invalid username or password'
             },
         ),
+        (
+            {
+                'username': 'ivan.ivanov',
+                'new_password': 'ivanov777',
+            },
+            {
+                'status': HTTPStatus.BAD_REQUEST,
+                'message': 'Invalid input parameters'
+            },
+        ),
     ],
 )
 def test_login(data, expected_answer):
