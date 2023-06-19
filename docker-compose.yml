@@ -31,6 +31,8 @@ services:
     build: .
     container_name: auth_service
     restart: always
+    env_file:
+      - ./.env
     networks:
       - new_admin_panel_sprint_2_admin_panel_network
     

@@ -143,7 +143,7 @@
 
 ✅ 1. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/utils/backoff.py#L33) было бы более универсальное решение - принимать например кортеж исключений на которые нужно реагировать. Посмотрите для примера например реализацию https://github.com/invl/retry
 
-2. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L12) не нужно копировать .env внутрь образа, пользуйтесь возможностью передачи значений с помощью переменных окружения - https://docs.docker.com/compose/environment-variables/set-environment-variables/
+✅ 2. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L12) не нужно копировать .env внутрь образа, пользуйтесь возможностью передачи значений с помощью переменных окружения - https://docs.docker.com/compose/environment-variables/set-environment-variables/
 
 3. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L22) можно добавить `RUN chmod +x /startup.sh`, например чтоб 100% у файла были права на выполнение.
 

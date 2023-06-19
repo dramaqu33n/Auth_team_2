@@ -9,7 +9,6 @@ ENV PYTHONPATH=/opt
 RUN mkdir -p /opt/src
 
 COPY requirements.txt requirements.txt
-COPY .env .env 
 
 RUN  pip install --upgrade pip \
      && pip install -r requirements.txt
