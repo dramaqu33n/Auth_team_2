@@ -142,18 +142,30 @@
 Здравствуйте ! Отлично поработали ! Есть небольшие рекомендации:
 
 ✅ 1. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/utils/backoff.py#L33) было бы более универсальное решение - принимать например кортеж исключений на которые нужно реагировать. Посмотрите для примера например реализацию https://github.com/invl/retry
+
 2. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L12) не нужно копировать .env внутрь образа, пользуйтесь возможностью передачи значений с помощью переменных окружения - https://docs.docker.com/compose/environment-variables/set-environment-variables/
+
 3. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/Dockerfile#L22) можно добавить `RUN chmod +x /startup.sh`, например чтоб 100% у файла были права на выполнение.
+
 4. Для целей разработки и тестирования давайте сделаем возможность выключать трассировщик и лимитер с помощью настроек через переменные окружения.
+
 5. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/app.py#L102) неплохо было бы добавить перехватчик необработанных исключений, чтоб на клиента всегда возвращался JSON ответ - https://flask.palletsprojects.com/en/2.3.x/errorhandling/#generic-exception-handlers
-6. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/main/src/models/__init__.py) пустой пакет, может удалить каталог models если не используется ?
+
+✅ 6. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/main/src/models/__init__.py) пустой пакет, может удалить каталог models если не используется ?
+
 7. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/db/db_config.py#L1) вы использовали чистоую алхимию, но я бы вам посоветовал использовать библиотеки которые у вас уже есть в зависимостях - https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/requirements.txt#L24 и https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/requirements.txt#L21 для интеграции во Flask миграций и ОРМ. Так будет меньше кода, так будут закрываться сессии к БД в нужный момент. Например не нужно было бы писать вот подобный код - https://github.com/dramaqu33n/Auth_team_2/blob/main/src/db/init_migrate.py. 
+
 8. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/db/superuser.py#L21) можно посмотреть на возможность написать именно команду https://flask-docs.readthedocs.io/en/latest/cli/#custom-commands. Можно сделать параметризованную команду вроде джанговой createsuperuser.
+
 9. Напишите инструкцию с шагами запуска Вашего приложения, как накатить миграции, как создать суперпользователя и возможно дефолтные группы.
+
 10. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/auth.py#L22-L46) вы прямо в обработчике запроса делаете запросы в БД, храните по сути всю логику. Неплохой практикой является вынести бизнес логику в слой сервисов и из обработчика вызывать соотвествующие методы сервиса. Второй момент - отсутствует валидация параметров - есть вот такая библиотека https://flask-marshmallow.readthedocs.io/en/latest/index.html попробуйте разобраться и прикрутить валидацию принимаемых параметров.
+
 11. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/history.py#L25) получится лаконичнее если используете https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/#paging-query-results
+
 12. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/oauth.py#L32-L33) второй вызов перетирает предыдущее значение.
-13. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/main/tests/functional/requirements.txt) пустой файлик.
+
+✅ 13. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/main/tests/functional/requirements.txt) пустой файлик.
 
 ## Code Review Issues
 
