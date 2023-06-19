@@ -7,6 +7,7 @@ from src.logs.log_config import logger
 
 
 def backoff(
+        exceptions: tuple = (Redis_ConnectionError, ValueError),
         start_sleep_time: float = 0.1,
         factor: int = 2,
         border_sleep_time: int = 20,
@@ -30,7 +31,7 @@ def backoff(
             while True:
                 try:
                     return func(*args, **kwargs)
-                except (Redis_ConnectionError, ValueError) as e:
+                except exceptions as e:
                     retries += 1
                     logger.warning(
                         "#%g. Now we'll sleep for %gs. Error type: %s. Message: %s" %
