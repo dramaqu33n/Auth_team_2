@@ -5,13 +5,13 @@ from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_login import login_user, logout_user
 
-from src.db.db_config import Base, engine, db_session
+from src.db.db_config import db
 from src.db.model import User, AccessHistory, Role
 from src.db.redis import TokenStorage, TokenType
 
 
-Base.metadata.bind = engine
 token_storage = TokenStorage()
+db_session = db.session
 
 
 def register_user(data):

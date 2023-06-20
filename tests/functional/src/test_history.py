@@ -54,6 +54,7 @@ def test_get_my_history(authenticated_client):
     assert len(set(access_history_records)) == len(response_data)
     assert len(set(access_history_user_ids)) == 1
 
+
 def test_paginated_history(authenticated_superuser):
     response = authenticated_superuser.get(
         'api/v1/history/?page=1&per_page=5',

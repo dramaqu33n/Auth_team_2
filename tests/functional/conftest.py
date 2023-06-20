@@ -1,5 +1,3 @@
-from http import HTTPStatus
-from time import sleep
 import pytest
 import random
 
@@ -7,9 +5,12 @@ from flask import json
 
 from src.app import app
 from src.core.config import settings
-from src.db.db_config import db_session
+from src.db.db_config import db
 from src.db.model import User
 from src.logs.log_config import logger
+
+
+db_session = db.session
 
 
 @pytest.fixture
@@ -63,6 +64,7 @@ def authenticated_superuser():
     access_token = response_data['access_token']
     tester.access_token = access_token
     return tester
+
 
 @pytest.fixture(autouse=True)
 def cleanup():

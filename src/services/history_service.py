@@ -2,23 +2,22 @@ from http import HTTPStatus
 
 from flask import jsonify
 
-from src.db.db_config import Base, engine, db_session
+from src.db.db_config import db
 from src.db.model import AccessHistory, User
 
 
-Base.metadata.bind = engine
+db_session = db.session
 
 
 def get_user_access_history(user_id, page, per_page):
     user = db_session.query(User).filter(User.id == user_id).first()
     roles = [role.role_name for role in user.roles]
     if roles[0] != 'guest':
-        access_history_records = db_session.query(AccessHistory).filter(
-            AccessHistory.user_id == user_id
+        access_history_records = AccessHistory.query.filter_by(user_id=user_id)
+        paginated_access_history = access_history_records.paginate(
+            page=page,
+            per_page=per_page,
         )
-        paginated_access_history = access_history_records.limit(per_page).offset(
-            (page - 1) * per_page
-        ).all()
         serialized_access_history_records = [
             {
                 'id': record.id,
@@ -38,10 +37,11 @@ def get_access_history(user_id, page, per_page):
     roles = [role.role_name for role in user.roles]
     if not set(roles) & set(('superuser', 'admin')):
         return jsonify({'message': 'Permission denied'}), HTTPStatus.FORBIDDEN
-    access_history_records = db_session.query(AccessHistory)
-    paginated_access_history = access_history_records.limit(per_page).offset(
-        (page - 1) * per_page
-    ).all()
+    access_history_records = AccessHistory.query
+    paginated_access_history = access_history_records.paginate(
+        page=page,
+        per_page=per_page,
+    )
     serialized_access_history_records = [
         {
             'id': record.id,

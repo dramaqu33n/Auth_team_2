@@ -8,10 +8,13 @@ from flask import json
 
 from src.app import app
 from src.core.config import settings
-from src.db.db_config import db_session
+from src.db.db_config import db
 from src.db.model import User
 from src.db.redis import TokenStorage
 from src.logs.log_config import logger
+
+
+db_session = db.session
 
 
 @pytest.mark.parametrize(

@@ -4,12 +4,15 @@ import random
 from flask import json
 
 from src.app import app
-from src.db.db_config import db_session
+from src.db.db_config import db
 from src.db.model import Role
 from src.logs.log_config import logger
 from tests.functional.utils import make_authenticated_delete
 from tests.functional.utils import make_authenticated_post
 from tests.functional.utils import make_authenticated_put
+
+
+db_session = db.session
 
 
 def test_list_roles(authenticated_client):

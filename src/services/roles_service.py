@@ -3,11 +3,11 @@ from http import HTTPStatus
 
 from flask import jsonify
 
-from src.db.db_config import Base, engine, db_session
+from src.db.db_config import db
 from src.db.model import Role
 
 
-Base.metadata.bind = engine
+db_session = db.session
 
 
 def get_all_roles():

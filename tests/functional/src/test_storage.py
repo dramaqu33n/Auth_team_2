@@ -21,6 +21,7 @@ def test_token_storage():
     )
     assert retrieved_token == access_token.encode()
 
+
 def test_ttl():
     token_storage = TokenStorage()
     user_id = '123'
