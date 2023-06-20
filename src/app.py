@@ -14,7 +14,8 @@ from src.api.v1.oauth import oauth_bp, oauth
 from src.api.v1.roles import roles_bp
 from src.core.config import settings
 from src.db.db_config import db_session
-from src.db.model import User
+from src.db.model import User, Role, UserRole
+from src.logs.log_config import logger
 
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -22,7 +23,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
-
+import click
 
 def configure_tracer() -> None:
     resource = Resource(attributes={
@@ -118,6 +119,40 @@ def internal_server_error_handler(e):
     }
 
     return jsonify(response), 500
+
+@app.cli.command("create_superuser")
+def create_superuser() -> bool:
+    '''There must be at least one superuser in our initial db'''
+    superusername = click.prompt('Enter Username')
+    name = click.prompt('Enter Name')
+    surname = click.prompt('Enter Surname')
+    email = click.prompt('Enter Email')
+    password = click.prompt('Enter Password', hide_input=True)
+    
+    superuser_role = db_session.query(Role).filter_by(role_name='superuser').first()
+    if not superuser_role:
+        logger.critical('Create superuser role first in Role model')
+        raise ValueError
+    superuser_role_id = superuser_role.id
+
+    superuser = User(
+        username=superusername,
+        name=name,
+        surname=surname,
+        email=email
+    )
+
+    superuser.set_password(password)
+    logger.info('Superuser %s created', superuser)
+    db_session.add(superuser)
+    db_session.commit()
+    superuser_role = UserRole(
+        user_id=superuser.id,
+        role_id=superuser_role_id
+        )
+    db_session.add(superuser_role)
+    db_session.commit()
+    return True
 
 if __name__ == '__main__':
     app.run()
