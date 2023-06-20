@@ -33,3 +33,6 @@ migrate:
 
 create_superuser:
 	docker exec -it auth_service flask --app src.app createsuperuser
+
+create_basic_roles:
+	docker exec -it auth_service flask --app src.app create_basic_roles
