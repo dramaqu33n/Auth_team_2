@@ -179,7 +179,7 @@ make up_test
 
 ✅ 6. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/main/src/models/__init__.py) пустой пакет, может удалить каталог models если не используется ?
 
-7. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/db/db_config.py#L1) вы использовали чистоую алхимию, но я бы вам посоветовал использовать библиотеки которые у вас уже есть в зависимостях - https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/requirements.txt#L24 и https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/requirements.txt#L21 для интеграции во Flask миграций и ОРМ. Так будет меньше кода, так будут закрываться сессии к БД в нужный момент. Например не нужно было бы писать вот подобный код - https://github.com/dramaqu33n/Auth_team_2/blob/main/src/db/init_migrate.py. 
+✅ 7. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/db/db_config.py#L1) вы использовали чистоую алхимию, но я бы вам посоветовал использовать библиотеки которые у вас уже есть в зависимостях - https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/requirements.txt#L24 и https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/requirements.txt#L21 для интеграции во Flask миграций и ОРМ. Так будет меньше кода, так будут закрываться сессии к БД в нужный момент. Например не нужно было бы писать вот подобный код - https://github.com/dramaqu33n/Auth_team_2/blob/main/src/db/init_migrate.py. 
 
 ✅ [сделано, но не получилось разделить код на модули] 8. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/db/superuser.py#L21) можно посмотреть на возможность написать именно команду https://flask-docs.readthedocs.io/en/latest/cli/#custom-commands. Можно сделать параметризованную команду вроде джанговой createsuperuser.
 
@@ -187,7 +187,7 @@ make up_test
 
 ✅ 10. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/auth.py#L22-L46) вы прямо в обработчике запроса делаете запросы в БД, храните по сути всю логику. Неплохой практикой является вынести бизнес логику в слой сервисов и из обработчика вызывать соотвествующие методы сервиса. Второй момент - отсутствует валидация параметров - есть вот такая библиотека https://flask-marshmallow.readthedocs.io/en/latest/index.html попробуйте разобраться и прикрутить валидацию принимаемых параметров.
 
-11. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/history.py#L25) получится лаконичнее если используете https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/#paging-query-results
+✅ 11. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/history.py#L25) получится лаконичнее если используете https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/#paging-query-results
 
 ✅ 12. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/oauth.py#L32-L33) второй вызов перетирает предыдущее значение.
 
