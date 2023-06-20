@@ -183,13 +183,13 @@ make up_test
 
 ✅ [сделано, но не получилось разделить код на модули] 8. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/db/superuser.py#L21) можно посмотреть на возможность написать именно команду https://flask-docs.readthedocs.io/en/latest/cli/#custom-commands. Можно сделать параметризованную команду вроде джанговой createsuperuser.
 
-9. Напишите инструкцию с шагами запуска Вашего приложения, как накатить миграции, как создать суперпользователя и возможно дефолтные группы.
+✅ 9. Напишите инструкцию с шагами запуска Вашего приложения, как накатить миграции, как создать суперпользователя и возможно дефолтные группы.
 
 ✅ 10. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/auth.py#L22-L46) вы прямо в обработчике запроса делаете запросы в БД, храните по сути всю логику. Неплохой практикой является вынести бизнес логику в слой сервисов и из обработчика вызывать соотвествующие методы сервиса. Второй момент - отсутствует валидация параметров - есть вот такая библиотека https://flask-marshmallow.readthedocs.io/en/latest/index.html попробуйте разобраться и прикрутить валидацию принимаемых параметров.
 
 11. [Здесь](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/history.py#L25) получится лаконичнее если используете https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/pagination/#paging-query-results
 
-12. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/oauth.py#L32-L33) второй вызов перетирает предыдущее значение.
+✅ 12. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/45eb7a7c716d54c5494b1b7098a09a1d2ae76b60/src/api/v1/oauth.py#L32-L33) второй вызов перетирает предыдущее значение.
 
 ✅ 13. [Тут](https://github.com/dramaqu33n/Auth_team_2/blob/main/tests/functional/requirements.txt) пустой файлик.
 
