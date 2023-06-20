@@ -30,3 +30,6 @@ test_config:
 
 migrate:
 	export ENV_MODE=.env.local; export PYTHONPATH=${PWD}; alembic revision --autogenerate  -m "Added user_agent field to access history model"
+
+create_superuser:
+	docker exec -it auth_service flask --app src.app createsuperuser

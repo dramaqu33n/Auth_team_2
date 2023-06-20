@@ -9,10 +9,6 @@ from src.core.log_config import logger
 env_path = os.getenv('ENV_MODE')
 load_dotenv(env_path, override=True)
 
-logger.info('Current ENV FILE (ENV_MODE): %s', env_path)
-logger.info('DB HOST: %s', os.getenv('DB_HOST'))
-logger.info('REDIS HOST: %s', os.getenv('REDIS_HOST'))
-
 class Settings(BaseSettings):
     project_name: str
     enable_tracer: str
@@ -44,4 +40,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-logger.info('Settings base_dir: {%s}', settings.base_dir)
