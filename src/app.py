@@ -154,5 +154,18 @@ def create_superuser() -> bool:
     db_session.commit()
     return True
 
+@app.cli.command('create_basic_roles')
+def create_basic_roles(basic_roles: list[str] = ['superuser', 'admin', 'user', 'guest']):
+    '''Creating basic role types in initial db'''
+    for role_name in basic_roles:
+        role = db_session.query(Role).filter_by(role_name=role_name).first()
+        if role:
+            logger.info('Role %s exists', role_name)
+            continue
+        role = Role(role_name=role_name)
+        db_session.add(role)
+        db_session.commit()
+        logger.info('Role %s created', role_name)
+
 if __name__ == '__main__':
     app.run()
